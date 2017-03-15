@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <% include _head.html %>
+  <title>注册</title>
+  <link href="/css/login.css" rel="stylesheet">
+
+</head>
+<body>
+<div class="container">
+  <form class="form-signin">
+    <h2 class="form-signin-heading">注册新用户</h2>
+    <label for="inputUsername" >手机号码</label>
+    <!--将初始焦点设定到用户名输入框上-->
+    <input type="text" id="inputUsername" class="form-control" placeholder="请输入手机号码" required autofocus>
+    <label for="inputPassword">密码</label>
+    <input type="password" id="inputPassword" class="form-control" placeholder="请输入密码" required>
+    <label for="inputREPassword">重复输入密码</label>
+    <input type="password" id="inputREPassword" class="form-control" placeholder="请再次输入密码" required>
+    <div class="checkbox">
+      <a href="/login">已有账号</a>
+    </div>
+    <button id="registerButton" class="btn btn-lg btn-primary btn-block" type="submit">注册</button>
+  </form>
+</div>
+ <!--注册成功的弹出框-->
+<div class="modal fade" id="mymodal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">成功</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-success" role="alert">恭喜您注册成功！稍后将为您跳转到登录页面 </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+</body>
+</html>
+<% include _foot.html %>
+<script>
+  $(function () {
+    $('#registerButton').click(function (e) {
+      e.preventDefault();
+      var username = $("#inputUsername").val();
+      var password = $("#inputPassword").val();
+      var rePassword = $("#inputREPassword").val();
+      if(!username){
+        alert("用户名不能为空!");
+        //将焦点移动到用户名上
+        $("#inputUsername").focus();
+        return;
+      }
+      if(!password){
+        alert("密码不能为空!");
+        //移动焦点到密码
+        $("#inputPassword").focus();
+        return;
+      }
+      if(!rePassword){
+        alert("请再次输入密码!");
+        $("#inputREPassword").focus();
+        return;
+      }
+      if(!(password===rePassword)){
+        alert("两次输入密码不一致!");
+        //移动焦点到密码
+        $("#inputPassword").focus();
+        return;
+      }
+      //判断手机号码
+      var myreg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+      if(!myreg.test(username))
+      {
+        alert('请输入有效的手机号码！');
+        $("#inputUsername").focus();
+        return ;
+      }
+      postUrl('/register',  {username: username, password: password});
+    })
+  })
+
+  //弹出成功的提示框
+  var successWithData = function(data) {
+    $("#mymodal").modal("toggle");
+    //延迟4秒跳转到登录界面
+    setTimeout(function () {
+      location.href = '/login';
+    }, 4000);
+  }
+</script>

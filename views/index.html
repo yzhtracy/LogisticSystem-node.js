@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include _head.html %>
+  <title>主页</title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <style type="text/css">
+    a{margin-left: 20px; text-decoration: none;}
+    a:hover{text-decoration: underline;}
+  </style>
+</head>
+<body>
+<% include _nav.html %>
+<h1><%= title %></h1>
+<p>Welcome to <%= title %></p>
+
+<p><a href="/login">前往登录页面 </a>
+  <a href="/register">前往注册页面</a>
+</p>
+</body>
+</html>
+
+<% include _foot.html %>

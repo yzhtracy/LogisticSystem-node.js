@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <% include _head.html %>
+    <title>登录</title>
+    <link href="/css/login.css" rel="stylesheet">
+
+</head>
+<body>
+<div class="container">
+    <form class="form-signin">
+        <h2 class="form-signin-heading">用户登录</h2>
+        <label for="inputUsername" >用户名/手机号码</label>
+        <!--将初始焦点设定到用户名输入框上-->
+        <input type="text" id="inputUsername" class="form-control" placeholder="请输入用户名或手机号" required autofocus>
+        <label for="inputPassword">密码</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="请输入密码" required>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" value="remember-me" checked="checked"> 记住密码</label>
+            <a href="/register" style="margin-left: 40px">注册新用户</a>
+            <a href="/resetPassword" style="float: right">忘记密码?</a>
+        </div>
+        <button id="loginButton" class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+    </form>
+</div>
+</body>
+</html>
+<% include _foot.html %>
+<script>
+    $(function () {
+        $('#loginButton').click(function (e) {
+            e.preventDefault();
+            var username = $("#inputUsername").val();
+            var password = $("#inputPassword").val();
+            if(!username){
+                alert("用户名不能为空");
+                //将焦点移动到用户名上
+                $("#inputUsername").focus();
+                return;
+            }
+            if(!password){
+                alert("密码不能为空");
+                //移动焦点到面膜
+                $("#inputPassword").focus();
+                return;
+            }
+            goUrl('/login',  {username: username, password: password}, '/');
+        })
+    })
+
+</script>
