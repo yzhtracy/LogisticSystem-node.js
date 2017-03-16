@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <title><%= title %></title>
-    <style type="text/css">
-        a{margin-left: 20px; text-decoration: none;}
-        a:hover{text-decoration: underline;}
-    </style>
+    <% include _head.html %>
+    <title>主页</title>
+    <link href="/css/login.css" rel="stylesheet">
+
 </head>
 <body>
-<h1>Your name:   <%- user.name %></h1>
-<p>Welcome to your home ~</p>
-<p><a href="/logout">我要注销 </a>
-</p>
+<% include _nav.html %>
+<div class="container">
+    <h1>这里登录后的主菜单</h1>
+    <h5>现在这里的东西还没有开始写</h5>
+</div>
 </body>
 </html>
+<% include _foot.html %>

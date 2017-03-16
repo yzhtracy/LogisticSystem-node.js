@@ -1,23 +1,235 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
   <% include _head.html %>
-  <title>主页</title>
-  <link rel='stylesheet' href='/stylesheets/style.css' />
-  <style type="text/css">
-    a{margin-left: 20px; text-decoration: none;}
-    a:hover{text-decoration: underline;}
-  </style>
-</head>
-<body>
-<% include _nav.html %>
-<h1><%= title %></h1>
-<p>Welcome to <%= title %></p>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-<p><a href="/login">前往登录页面 </a>
-  <a href="/register">前往注册页面</a>
-</p>
+  <title>欢迎</title>
+  <!--<meta name="description" content="Conduct email marketing on a budget using Amazon SES. Powerful analytics, bounce/complaint tracking, Drag and Drop editor, Automation.">-->
+  <!--<meta name="keywords" content="mailblast, newsletters, amazon, ses, simple email service, email, marketing, blast emails, sendy"/>-->
+
+  <!--<meta property="og:title" content="Mailblast" />-->
+  <!--<meta property="og:image" content="https://cdn.mailblast.io/assets/social_logo-d30af49bf4ba30e17c8ee60d369b86ca6cf775e29073ca3f0d8c8d2447c8a1a7.png" />-->
+  <!--<meta property="og:description" content="Email Marketing on a budget using Amazon SES. Save money and time without sacrificing deliverability." />-->
+  <!--<meta property="og:url" content="https://mailblast.io/" />-->
+
+  <!--<meta name="twitter:card" content="summary_large_image">-->
+  <!--<meta name="twitter:site" content="@MailblastIO">-->
+  <!--<meta name="twitter:creator" content="@MailblastIO">-->
+  <!--<meta name="twitter:title" content="Mailblast">-->
+  <!--<meta name="twitter:description" content="Email Marketing on a budget using Amazon SES. Save money and time without sacrificing deliverability.">-->
+  <!--<meta name="twitter:image" content="https://cdn.mailblast.io/assets/social_header-b137f2840adf732100584c74bbf917c450005a32a7c958f8aac1c9265810d738.png">-->
+
+  <!--<link rel="apple-touch-icon" sizes="180x180" href="https://cdn.mailblast.io/assets/favicon/apple-touch-icon-e123f88a608d9814e44778d4699021cb82c567662962d210abd51029ad36d42f.png">-->
+  <!--<link rel="icon" type="image/png" href="https://cdn.mailblast.io/assets/favicon/favicon-32x32-c1cb4c5670ccf160f0a95f243fb0be6abd46ad7350cf3ffadde11c8f2557f7ed.png" sizes="32x32">-->
+  <!--<link rel="icon" type="image/png" href="https://cdn.mailblast.io/assets/favicon/favicon-16x16-45513cc8e94e0b7a829ce372a5e3be3687fdf57f756bb20cee3dc9fdd25fa796.png" sizes="16x16">-->
+  <!--<link rel="manifest" href="https://cdn.mailblast.io/assets/favicon/manifest-942aef770d3f6cc28a9693519f91119a36eccdec71213ba4febf19c848985329.json">-->
+  <!--<link rel="mask-icon" href="https://cdn.mailblast.io/assets/favicon/safari-pinned-tab-5f4b259c2e96616f25dce6d53aca4955dec6507d396238f59345045693959d94.svg" color="#32a7b8">-->
+  <meta name="msapplication-config" content="https://cdn.mailblast.io/assets/favicon/browserconfig-2c3a49f7bc6023e1231559b71d78810af74d90005bd9c93097d18d261c0ccbf4.xml">
+  <meta name="theme-color" content="#32a7b8">
+
+
+  <meta name="csrf-param" content="authenticity_token" />
+  <meta name="csrf-token" content="LayCPUo4jHgGxwBzruBQHwlUwRv58Bv42U48xYZ0rY5GzNrcY+A8y9tAVeV/QUDc4jBFFy/Un8nFFoun2RpltA==" />
+
+
+  <link rel="stylesheet" media="all" href="https://cdn.mailblast.io/assets/application-b5c4c9f4e86965904968bc0b2d16e3abac7dadd927ec5860abaa85c4573522e4.css" />
+  <link rel="stylesheet" media="screen" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css?family=Montserrat:400,700" />
+  <link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" />
+
+  <!--<script>-->
+    <!--(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){-->
+              <!--(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),-->
+            <!--m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)-->
+    <!--})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');-->
+
+    <!--ga('create', 'UA-86975455-1', 'auto');-->
+    <!--ga('send', 'pageview');-->
+  <!--</script>-->
+
+  <!--<script type="text/javascript">$crisp=[];CRISP_WEBSITE_ID="c127d752-0303-4d82-9be1-aac3c7cd7ce1";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.im/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>-->
+
+  <!--<script>-->
+    <!--(function(h,o,t,j,a,r){-->
+      <!--h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};-->
+      <!--h._hjSettings={hjid:382318,hjsv:5};-->
+      <!--a=o.getElementsByTagName('head')[0];-->
+      <!--r=o.createElement('script');r.async=1;-->
+      <!--r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;-->
+      <!--a.appendChild(r);-->
+    <!--})(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');-->
+  <!--</script>-->
+
+</head>
+
+<body id="home_controller" class="index_action">
+<div class="wrapper">
+
+  <nav class="navbar navbar-toggleable-sm header-area">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+      &#9776;
+    </button>
+
+    <a class="navbar-brand" href="https://github.com/yzhtracy/yzhLogisticSystem">github地址</a>
+    <div class="collapse navbar-collapse" id="navbar-collapse">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active"><a class="nav-link" href="/login">登录</a></li>
+        <li class="nav-item active"><a class="nav-link" href="/register">注册</a></li>
+        <li class="nav-item"><a class="nav-link" href="/resetPassword">重置密码</a></li>
+      </ul>
+    </div>
+  </nav>
+  <div id="home">
+    <div id="items">
+      <div class="cont-area">
+        <div class="container banner-area">
+          <ul class="slides clearfix">
+            <li>
+              <h1>Welcome!</h1>
+              <h5>欢迎使用yzh的简单零担物流管理系统</h5>
+              <br><br>
+              <div>
+                <a class="large-button" href="/login">开始使用</a>
+              </div>
+              <br><br>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="banner-btm-img"><img src="https://cdn.mailblast.io/assets/buildings-0a6a185ee753f3d1ebe524e823d607eeca456157112d59dbef7736bf686e851c.png" alt="Buildings" /></div>
+    </div>
+  </div>
+
+  <div class="about-area text-center">
+    <div class="section-spacing about-top-area">
+      <div class="container">
+        <div class="top-float-img">
+          <div class="image-container"><img src="https://cdn.mailblast.io/assets/rocket-a48cfc3291fc094678f42641cac521e64298f3fc8425f8219eb5b1bf9a4270ab.png" alt="Rocket" /></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slogan-area text-center">
+    <div class="section-spacing">
+      <div class="container">
+        <div style="margin-top: -7rem">
+          <h1>系统功能简介</h1>
+          <h5>刚做完用户系统,可以登录注册及修改密码 <a href="https://github.com/yzhtracy/yzhLogisticSystem" title="Amazon SES" target="_blank">github项目地址</a></h5>
+          <h5>之后的功能将以图文形式写在下面</h5>
+        </div>
+
+        <div class="divider_line"></div>
+      </div>
+    </div>
+  </div>
+
+  <!--<div class="features-area text-center">-->
+    <!--<div class="section-spacing">-->
+      <!--<div class="container">-->
+        <!--<h1 class="text-center mb-5">Features</h1>-->
+      <!--</div>-->
+
+      <!--<div class="container feature-section">-->
+        <!--<div class="row align-items-center">-->
+          <!--<div class="col-lg-5">-->
+            <!--<h4>List Management</h4>-->
+            <!--<h5 class="text-center">Upload and manage your subscriber lists online. Easy to use filters and import functionality make management a breeze.</h5>-->
+          <!--</div>-->
+          <!--<div class="col-lg-7">-->
+            <!--<img class="img-fluid" src="https://cdn.mailblast.io/assets/list-50ad5615e1e0df9354f78ff3d98e8c496931245b1427a86750386ef5104e18a5.png" alt="List" />-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="divider_line"></div>-->
+      <!--</div>-->
+
+      <!--<div class="container feature-section">-->
+        <!--<div class="row align-items-center">-->
+          <!--<div class="col-lg-5 push-lg-7">-->
+            <!--<h4>Send Campaigns</h4>-->
+            <!--<h5 class="text-center">Create, test and schedule campaigns using an easy to use wizard.</h5>-->
+          <!--</div>-->
+          <!--<div class="col-lg-7 pull-lg-5">-->
+            <!--<img class="img-fluid" src="https://cdn.mailblast.io/assets/campaign-c3032257a370cfdec294d866cb3c6951542b3f0acaff85b664b7b5fc668ac853.png" alt="Campaign" />-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="divider_line"></div>-->
+      <!--</div>-->
+
+      <!--<div class="container feature-section">-->
+        <!--<div class="row align-items-center">-->
+          <!--<div class="col-lg-5">-->
+            <!--<h4>Detailed Reports</h4>-->
+            <!--<h5 class="text-center">See detailed reports on every campaign. Bounces and complaints are automatically filtered for future campaigns.</h5>-->
+          <!--</div>-->
+          <!--<div class="col-lg-7">-->
+            <!--<img class="img-fluid" src="https://cdn.mailblast.io/assets/report-5e5760aec4e92a3b1f42bf7bb88e2f9033a1fca00609848ea54c1034ad36d4ef.png" alt="Report" />-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="divider_line"></div>-->
+      <!--</div>-->
+
+      <!--<div class="container feature-section">-->
+        <!--<div class="row align-items-center">-->
+          <!--<div class="col-lg-5 push-lg-7">-->
+            <!--<h4>Marketing Automation</h4>-->
+            <!--<h5 class="text-center">Send scheduled automated emails to users who sign up to your list.</h5>-->
+          <!--</div>-->
+          <!--<div class="col-lg-7 pull-lg-5">-->
+            <!--<img class="img-fluid" src="https://cdn.mailblast.io/assets/automation-c5b14d964ff4d5b7de87582a4abc90c8981cd6912a6b54e302f6a21e0d60bd97.png" alt="Automation" />-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="divider_line"></div>-->
+      <!--</div>-->
+
+      <!--<div class="container feature-section">-->
+        <!--<div class="row align-items-center">-->
+          <!--<div class="col-lg-5">-->
+            <!--<h4>Signup Forms</h4>-->
+            <!--<h5 class="text-center">Embed Signup forms on your website to drive subscribers to your list.</h5>-->
+          <!--</div>-->
+          <!--<div class="col-lg-7">-->
+            <!--<img class="img-fluid" src="https://cdn.mailblast.io/assets/forms-6fca82e2459b89af24a8e4fb7d30e538560660a25077fc001e3d5d943a5f884d.png" alt="Forms" />-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="divider_line"></div>-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
+
+  <div class="signup-area text-center">
+    <div class="section-spacing">
+      <div class="container feature-section">
+        <div class="row align-items-center">
+          <div class="col-lg-12">
+            <a class="btn btn-primary btn-lg " href="/login">进入系统</a>
+            <p class="text-muted">以小物流公司的运营模式为基础</p>
+            <p class="text-muted">web前端使用bootstrap框架，后端使用nodeJS编写，数据库使用mysql</p>
+          </div>
+          <div class="divider_line"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="push"></div>
+</div>
+<!--<script src="https://cdn.mailblast.io/assets/application-140f564d00691c40fb1dc9ba819b67c6b008c682a5df772db2b8ad5a7ce406eb.js"></script>-->
+<script type="text/javascript">
+  $(document).scroll(function() {
+    if ($(document).scrollTop() >= 1) {
+      $('.header-area').addClass('navbar-fixed-top');
+    } else {
+      $('.header-area').removeClass('navbar-fixed-top');
+    }
+  });
+</script>
+
 </body>
 </html>
-
-<% include _foot.html %>

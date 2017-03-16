@@ -40,7 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(function (req, res, next) {
   var url = req.originalUrl;
   console.log(req.session.user);
-  if ((url != "/login"&&url != "/register"&&url != "/resetPassword") && !req.session.user) {
+  if ((url != "/login"&&url != "/register"&&url != "/resetPassword"&&url != "/") && !req.session.user) {
     return res.redirect("/login");
   }
   next();
