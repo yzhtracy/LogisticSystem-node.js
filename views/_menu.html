@@ -1,0 +1,39 @@
+<div class=" col-md-1 sidebar" style="background-color: #e1e1e1;min-width:145px; ">
+    <ul class="nav nav-sidebar" style="">
+        <!--最高管理员菜单-->
+        <% if(user.permission == 1){ %>
+            <li class=""><a href="#">订单管理<span class="sr-only">(current)</span></a></li>
+            <li class=""><a href="#">用户管理</a></li>
+            <li class=""><a href="#">价格管理</a></li>
+            <li class=""><a href="#">情况总览</a></li>
+        <% } %>
+        <!--普通员工菜单-->
+        <% if(user.permission == 2){ %>
+        <li class=""><a href="#">我的订单<span class="sr-only">(current)</span></a></li>
+        <li class=""><a href="#">新增收件</a></li>
+        <li class=""><a href="#">价格管理</a></li>
+        <li class=""><a href="#">情况总览</a></li>
+        <% } %>
+        <!--用户菜单-->
+        <% if(user.permission == 3){ %>
+        <li class=""><a href="#">商品管理<span class="sr-only">(current)</span></a></li>
+        <li><a href="#">管理用户</a></li>
+        <li class=""><a href="#">原创漫画管理</a></li>
+        <li class=""><a href="#">原创设计管理</a></li>
+        <li class=""><a href="#">订单管理</a></li>
+        <li class=""><a href="#">特等奖设置</a></li>
+        <li class=""><a href="#">退换货处理</a></li>
+        <li class=""><a href="#">Banner图管理</a></li>
+        <li class=""><a href="#">资讯管理</a></li>
+        <li class=""><a href="#">作者管理</a></li>
+        <li class=""><a href="#">消息管理</a></li>
+        <li class=""><a href="#">APP版本管理</a></li>
+        <li class=""><a href="#">漫画大赛审核</a></li>
+        <li class=""><a href="#">漫画大赛评论</a></li>
+        <% } %>
+
+
+
+    </ul>
+
+</div>

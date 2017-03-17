@@ -15,7 +15,7 @@ var request = require('superagent');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  res.render('index',{ user: req.session.user });
 });
 
 
@@ -27,12 +27,12 @@ router.post("/login", function(req, res, next) {
 });
 
 router.route("/login").get(function(req,res){    // 到达此路径则渲染login文件，并传出title值供 login.html使用
-  res.render("login",{title:'User Login'});
+  res.render("login",{ user: req.session.user });
 });
 
 /* GET resetPassword page. */
 router.route("/resetPassword").get(function(req,res){    // 到达此路径则渲染register文件，并传出title值供 register.html使用
-  res.render("resetPassword",{title:'User resetPassword'});
+  res.render("resetPassword",{ user: req.session.user });
 });
 /* POST resetPassword page. */
 router.post("/resetPassword", function(req, res, next) {
@@ -42,7 +42,7 @@ router.post("/resetPassword", function(req, res, next) {
 
 /* GET register page. */
 router.route("/register").get(function(req,res){    // 到达此路径则渲染register文件，并传出title值供 register.html使用
-  res.render("register",{title:'User register'});
+  res.render("register",{ user: req.session.user });
 });
 /* POST register page. */
 router.post("/register", function(req, res, next) {
@@ -57,7 +57,8 @@ router.post("/logout",function(req,res){    // 到达 /logout 路径则登出，
 
 /* GET home page. */
 router.get("/home",function(req,res){
-  res.render("home",{title:'主页'});         //已登录则渲染home页面
+  res.render("home",{ user: req.session.user });         //已登录则渲染home页面
+
 });
 
 
