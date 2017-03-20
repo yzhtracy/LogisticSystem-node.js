@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <% include _head.html %>
+    <title>用户管理</title>
+    <link href="/css/userlist.css" rel="stylesheet">
+
+</head>
+<body>
+<% include _nav.html %>
+<div class="container-fluid">
+    <div class="row">
+            <% include _menu.html %>
+            <!--顶部按钮-->
+            <div class="col-md-11 col-md-offset-1 main">
+                <div class="container-fluid">
+                    <a type="button" class="btn btn-info add" href="/user/add">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+                    </a>
+                    <button type="button" class="btn btn-info edit">
+                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> 编辑
+                    </button>
+                    <button type="button" class="btn btn-info delete">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> 删除
+                    </button>
+                    <!--表格上方的列名-->
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th><input class="checkall" type="checkbox"></th>
+                                <th>ID</th>
+                                <th>用户名</th>
+                                <th>角色</th>
+                                <th>注册时间</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+    </div>
+</div>
+</body>
+</html>
+<% include _foot.html %>
+
+
+
+<script>
+    var tab = '/userlist';
+    //刷新表单
+    function refreshTable() {
+        $('.table').dataTable().fnClearTable();
+    }
+    //判断勾选数量决定按钮的可用性
+    function updateBtnStatus() {
+        var checkboxs = $(".dataTable .checkbox:checked");
+        if(checkboxs.length == 0){
+            $('.btn.edit').attr('disabled','disabled');
+            $('.btn.delete').attr('disabled','disabled');
+        }else if(checkboxs.length ==1){
+            $('.btn.edit').attr('disabled',null);
+            $('.btn.delete').attr('disabled',null);
+        }else {
+            $('.btn.edit').attr('disabled','disabled');
+            $('.btn.delete').attr('disabled',null);
+        }
+    }
+
+    $(function () {
+        //每页显示的数量
+        var pageSize = 15;
+        $('.table').dataTable({
+            "pagingType":"simple_numbers",//设置分页控件的模式
+            searching:false,//开启查询框
+            aLengthMenu:[pageSize],//每页显示的数量
+            "iDisplayLength": pageSize,
+            "bLengthChange": false,//屏蔽tables的一页展示多少条记录的下拉列表
+            aaSorting: [],
+            "oLanguage": {  //对表格国际化
+                "sLengthMenu": "每页显示 _MENU_条",
+                "sZeroRecords": "没有找到符合条件的数据",
+                "sInfo": "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
+                "sInfoEmpty": "没有记录",
+                "sInfoFiltered": "(从 _MAX_ 条记录中过滤)",
+                "sSearch": "搜索：",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "前一页",
+                    "sNext": "后一页",
+                    "sLast": "尾页"
+                }
+            },
+            stateSave: true,
+            "processing": true, //打开数据加载时的等待效果
+            "serverSide": true,//打开后台分页
+            "columns": [
+                { "orderable": false },
+                { "orderable": false },
+                { "orderable": false },
+                { "orderable": false },
+                { "orderable": false }
+            ],
+            "fnServerData" : function(sSource, aoData, fnCallback) {
+                var start = aoData[3].value;
+                var length = aoData[4].value;
+                $.post('/user/query', {start:start, length:length}, function(res){
+                    var ret = {recordsTotal: res.data.count,recordsFiltered:res.data.count, data:[]}
+                    for(var i=0;i<res.data.data.length;i++){
+                        var obj = res.data.data[i];
+                        var item = [];
+                        item.push('<input class="checkbox" type="checkbox" data-id="'+obj.id+'">');
+                        item.push(obj.id);
+                        item.push('<a href="/user/edit?id='+obj.id+'">'+obj.username+'</a>');
+                        item.push(obj.permission==1?'管理员':obj.permission==2?'员工':'用户');
+                        item.push('<span title="'+moment(obj.createTime).fromNow()+'">'+moment(obj.create_at).format('YYYY-MM-DD hh:mm:ss')+'</span>');
+                        ret.data.push(item);
+                    }
+                    fnCallback(ret);
+                    updateBtnStatus();
+                })
+            }
+        });
+        $('.btn.edit').attr('disabled', 'disabled');
+        $('.btn.delete').attr('disabled', 'disabled');
+        $('.dataTable').delegate('input.checkbox', 'click', function(e){
+            updateBtnStatus();
+        });
+        $('.dataTable').delegate('.checkall', 'click', function(e){
+            $('.dataTable .checkbox').prop('checked', $(this).prop('checked'));
+            updateBtnStatus();
+        });
+    });
+
+</script>

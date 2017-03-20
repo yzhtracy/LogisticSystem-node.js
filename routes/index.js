@@ -19,7 +19,7 @@ router.get('/', function(req, res, next) {
 });
 
 
-
+// ===============================注册登录相关请求========================================
 //登录的post请求
 router.post("/login", function(req, res, next) {
   userDao.login(req, res, next);
@@ -61,6 +61,27 @@ router.get("/home",function(req,res){
 
 });
 
+//============================管理员相关=================================
+
+//管用管理
+router.get('/userlist', function(req, res, next) {
+  res.render('userlist', { user: req.session.user});
+});
+router.get('/user/add', function(req, res, next) {
+  res.render('userform', { user: req.session.user});
+});
+router.get('/user/edit', function(req, res, next) {
+  res.render('userform', {user: req.session.user});
+});
+
+
+
+
+//API接口
+//============================用户管理API=============================
+router.post('/user/query', function(req, res, next) {
+  userDao.query(req, res, next,req.session.user);
+});
 
 
 

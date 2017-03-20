@@ -114,4 +114,31 @@ module.exports = {
         req.session.user = null;
         res.json(new msg(0, "成功"));
     },
+    query:function (req, res, next,user) {
+        console.log("用户的权限是====="+user.permission);
+        if(user.permission != 1){
+            data = new msg(-1,"");
+        }
+        pool.getConnection(function (err,connection) {
+            if(err){
+                throw err;
+            };
+            
+            var start = parseInt(req.body.start);
+            var length = parseInt(req.body.length);
+            //搜索符合条件的数据
+            connection.query('select * from users limit ?,?',[start, length], function(err, result) {
+                if(err){
+                    console.log("数据库链接失败  start="+start+"length=="+length);
+                    return res.json(new msg(-1, err));
+                }
+                //查询一共有多少条记录
+                connection.query('select count(1) from users', [], function(err, result2) {
+                    res.json(new msg(0, '', {count: result2[0]['count(1)'], data: result}));
+                });
+                // 释放连接
+                connection.release();
+            });
+        });
+    }
 };

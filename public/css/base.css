@@ -44,3 +44,33 @@ body{
 .nav-sidebar li:nth-child(odd){
     background-color:#fff!important;
 }
+
+.main {
+    padding: 20px;
+    overflow:auto;
+}
+@media (min-width: 768px) {
+    .main {
+        padding-right: 40px;
+        padding-left: 40px;
+    }
+}
+.main .page-header {
+    margin-top: 0;
+}
+
+
+form .form-control{
+    padding: 0 6px;
+    height: 28px;
+}
+form .input-group{
+    font-size:13px;
+}
+form .form-group.submit-btns{
+    margin-top: 45px;
+}
+.fileitem:hover{
+    border-color:#999;
+}
+
