@@ -41,6 +41,7 @@ app.use(function (req, res, next) {
   var url = req.originalUrl;
   console.log(req.session.user);
   if ((url != "/login"&&url != "/register"&&url != "/resetPassword"&&url != "/") && !req.session.user) {
+    console.log("未登录  强制跳转到登录界面");
     return res.redirect("/login");
   }
   next();

@@ -14,7 +14,7 @@
             <!--顶部按钮-->
             <div class="col-md-11 col-md-offset-1 main">
                 <div class="container-fluid">
-                    <a type="button" class="btn btn-info add" href="/user/add">
+                    <a type="button" class="btn btn-info add" href="javascript:void(0);" onclick="addUserInfo()">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
                     </a>
                     <button type="button" class="btn btn-info edit">
@@ -40,6 +40,44 @@
             </div>
     </div>
 </div>
+
+<!--弹出的编辑框-->
+<div class="modal fade" id="mymodal">
+    <div class="modal-dialog" style="margin: 200px auto">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">用户信息编辑</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="editinputUsername">用户名/手机</label>
+                    <input type="text" id="editinputUsername" class="form-control" placeholder="请输入用户名"  autocomplete="off" >
+                </div>
+
+                <div class="form-group">
+                    <label for="editinputPassword">密码</label>
+                    <input type="password" id="editinputPassword" class="form-control" placeholder="请输入密码"  value="" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="inputFreightId" class="col-sm-2 control-label" style="margin-top: 10px;margin-left: -10px;">职能:</label>
+                    <div class="col-sm-8 input-group">
+                        <!--<input type="text" class="form-control" id="inputFreightNo" placeholder="快递公司" required autofocus>-->
+                        <select id="inputFreightId" class="form-control" required>
+                            <option value="3">用户</option>
+                            <option value="2">工作人员</option>
+                            <option value="1">管理员</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="saveButton">保存</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 </body>
 </html>
 <% include _foot.html %>
@@ -49,9 +87,15 @@
 <script>
     var tab = '/userlist';
     //刷新表单
+
+    var isAddUser;
+    var UserID;
+
     function refreshTable() {
         $('.table').dataTable().fnClearTable();
     }
+
+    var dataArray;
     //判断勾选数量决定按钮的可用性
     function updateBtnStatus() {
         var checkboxs = $(".dataTable .checkbox:checked");
@@ -105,19 +149,23 @@
                 var start = aoData[3].value;
                 var length = aoData[4].value;
                 $.post('/user/query', {start:start, length:length}, function(res){
-                    var ret = {recordsTotal: res.data.count,recordsFiltered:res.data.count, data:[]}
-                    for(var i=0;i<res.data.data.length;i++){
-                        var obj = res.data.data[i];
-                        var item = [];
-                        item.push('<input class="checkbox" type="checkbox" data-id="'+obj.id+'">');
-                        item.push(obj.id);
-                        item.push('<a href="/user/edit?id='+obj.id+'">'+obj.username+'</a>');
-                        item.push(obj.permission==1?'管理员':obj.permission==2?'员工':'用户');
-                        item.push('<span title="'+moment(obj.createTime).fromNow()+'">'+moment(obj.create_at).format('YYYY-MM-DD hh:mm:ss')+'</span>');
-                        ret.data.push(item);
+                    if(res.code>=0){
+                        dataArray = res.data.data;
+                        var ret = {recordsTotal: res.data.count,recordsFiltered:res.data.count, data:[]}
+                        for(var i=0;i<res.data.data.length;i++){
+                            var obj = res.data.data[i];
+                            var item = [];
+                            item.push('<input class="checkbox" type="checkbox" data-id="'+obj.id+'">');
+                            item.push(obj.id);
+                            item.push('<a href="javascript:void(0);" onclick="editUserInfo('+i+')" data-index=i>'+obj.username+'</a>');
+                            item.push(obj.permission==1?'管理员':obj.permission==2?'员工':'用户');
+                            item.push('<span title="'+moment(obj.createTime).fromNow()+'">'+moment(obj.create_at).format('YYYY-MM-DD hh:mm:ss')+'</span>');
+                            ret.data.push(item);
+                        }
+                        fnCallback(ret);
+                        updateBtnStatus();
                     }
-                    fnCallback(ret);
-                    updateBtnStatus();
+
                 })
             }
         });
@@ -132,4 +180,71 @@
         });
     });
 
+    //触发弹出框
+    var editUserInfo = function (index) {
+        isAddUser = false;
+        showUserInfo(index);
+    };
+    var addUserInfo = function () {
+        isAddUser = true;
+        showUserInfo();
+    };
+
+    var showUserInfo = function (index) {
+        $("#editinputUsername").val(isAddUser==false?dataArray[index].username:"");
+        $("#editinputUsername").attr("disabled",isAddUser==false?"disabled":null);
+        $("#editinputPassword").val(isAddUser==false?dataArray[index].password:"");
+        $("#inputFreightId").val(isAddUser==false?dataArray[index].permission:"3");
+        UserID = isAddUser==false?dataArray[index].id:null;
+        $("#mymodal").modal("toggle");
+    }
+
+    //保存按钮触发
+    $("#saveButton").click(function () {
+        var username = $("#editinputUsername").val();
+        var password = $("#editinputPassword").val();
+        var permission = $("#inputFreightId").val();
+        if(!username||!password||!permission){
+            alert("请完整填写用户信息!");
+            return;
+        }
+        if(isAddUser == true){
+            postUrl('/addUser',  {username: username, password: password,permission: permission});
+        }else {
+            postUrl('/editUser',  {userID: UserID, password: password,permission: permission});
+        }
+    });
+
+    //删除按钮触发
+    $('.btn.delete').on('click', function(e){
+        if(!confirm("确定删除吗?")){
+            return;
+        }
+        var ids = [];
+        $('.checkbox:checked').each(function(i, item){
+            ids.push(parseInt($(item).attr('data-id')));
+        });
+        postUrl('/deleteUser', {ids: ids.join(',')});
+
+    });
+    //编辑按钮触发
+    $('.btn.edit').on('click',function (e) {
+        var uid;
+        $('.checkbox:checked').each(function(i, item){
+            uid = (parseInt($(item).attr('data-id')));
+        });
+        for(var i=0;i<dataArray.length;i++){
+            if(dataArray[i].id==uid){
+                editUserInfo(i);
+                return;
+            }
+        }
+    })
+
+
+    var successWithData = function() {
+        alert("操作成功");
+        $('#mymodal').modal('hide');
+        $('.table').dataTable().fnClearTable();
+    }
 </script>

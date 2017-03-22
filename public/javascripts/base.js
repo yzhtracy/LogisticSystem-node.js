@@ -31,7 +31,6 @@ var postUrl = function(postUrl, data){
             return alert(res.msg);
         }
         //成功返回自定义信息
-        that.successWithData("");
-        location.href = redirectUrl;
+        that.successWithData();
     })
 }

@@ -82,6 +82,15 @@ router.get('/user/edit', function(req, res, next) {
 router.post('/user/query', function(req, res, next) {
   userDao.query(req, res, next,req.session.user);
 });
+router.post('/addUser',function (req,res,next) {
+  userDao.addUser(req, res, next,req.session.user);
+});
+router.post('/editUser',function (req,res,next) {
+  userDao.editUser(req, res, next,req.session.user);
+});
+router.post('/deleteUser',function (req,res,next) {
+  userDao.deleteUser(req, res, next,req.session.user);
+});
 
 
 
