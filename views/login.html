@@ -1,29 +1,45 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="login-bg" style="background-image: url(images/blueish.jpg)">
+
 <head>
     <% include _head.html %>
     <title>登录</title>
     <link href="/css/login.css" rel="stylesheet">
+    <!-- libraries -->
+    <link rel="stylesheet" type="text/css" href="css/lib/font-awesome.css">
 
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="css/compiled/signin.css" type="text/css" media="screen" />
+
+    <!-- open sans font -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 </head>
-<body>
-<div class="container">
-    <form class="form-signin">
-        <h2 class="form-signin-heading">用户登录</h2>
-        <label for="inputUsername" >用户名/手机号码</label>
-        <!--将初始焦点设定到用户名输入框上-->
-        <input type="text" id="inputUsername" class="form-control" placeholder="请输入用户名或手机号" required autofocus>
-        <label for="inputPassword">密码</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="请输入密码" required>
-        <div class="checkbox">
-            <label>
-                <input type="checkbox" value="remember-me" checked="checked"> 记住密码</label>
-            <a href="/register" style="margin-left: 40px">注册新用户</a>
-            <a href="/resetPassword" style="float: right">忘记密码?</a>
+<body style="padding-top: 0px">
+<div class="login-wrapper">
+    <div class="box">
+        <div class="content-wrap">
+            <h6>登录</h6>
+            <input class="form-control" id="inputUsername" type="text" placeholder="用户名或手机号" required autofocus>
+            <input class="form-control" id="inputPassword" type="password" placeholder="密码" required>
+            <a href="/resetPassword" class="forgot">忘记密码?</a>
+            <div class="remember">
+                <input id="remember-me" type="checkbox" checked="checked">
+                <label for="remember-me" >记住密码</label>
+            </div>
+            <button id="loginButton" class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
         </div>
-        <button id="loginButton" class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
-    </form>
+    </div>
+
+    <div class="no-account">
+        <p style="color: white">还没账号?</p>
+        <a style="color: #00B7FF" href="/register">注册</a>
+    </div>
 </div>
+
 </body>
 </html>
 <% include _foot.html %>

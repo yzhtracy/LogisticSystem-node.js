@@ -3,6 +3,7 @@ var router = express.Router();
 
 var cfg = require('../conf/cfg.js');
 var userDao = require('../dao/userDao.js');
+var priceDao = require('../dao/priceDao.js');
 var multer  = require('multer');
 var formidable = require('formidable');
 var os = require('os');
@@ -63,7 +64,7 @@ router.get("/home",function(req,res){
 
 //============================管理员相关=================================
 
-//管用管理
+//用户管理管理
 router.get('/userlist', function(req, res, next) {
   res.render('userlist', { user: req.session.user});
 });
@@ -73,6 +74,12 @@ router.get('/user/add', function(req, res, next) {
 router.get('/user/edit', function(req, res, next) {
   res.render('userform', {user: req.session.user});
 });
+
+//站点及价格管理
+router.get('/priceManage', function(req, res, next) {
+  res.render('priceManage', { user: req.session.user});
+});
+
 
 
 
@@ -91,6 +98,30 @@ router.post('/editUser',function (req,res,next) {
 router.post('/deleteUser',function (req,res,next) {
   userDao.deleteUser(req, res, next,req.session.user);
 });
+
+//站点及价格管理
+router.get('/queryPrice',function (req,res,next) {
+  priceDao.queryPrice(req,res,next);
+})
+router.post('/changePrice',function (req,res,next) {
+  priceDao.changePrice(req,res,next);
+})
+router.get('/getLogisticAddress',function (req,res,next) {
+  priceDao.getLogisticAddress(req,res,next);
+})
+router.post('/addAddress',function (req,res,next) {
+  priceDao.addAddress(req,res,next);
+  
+})
+router.post('/address/query',function (req,res,next) {
+  priceDao.queryAddress(req,res,next);
+})
+router.post('/changeAddress',function (req,res,next) {
+  priceDao.changeAddress(req,res,next);
+})
+router.post('/deleteAddress',function (req,res,next) {
+  priceDao.deleteAddress(req,res,next);
+})
 
 
 

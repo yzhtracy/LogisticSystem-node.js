@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <% include _head.html %>
+    <title>主页</title>
+    <link href="/css/userlist.css" rel="stylesheet">
+</head>
+<body style="">
+<% include _nav.html %>
+<div class="container-fluid">
+    <div class="row">
+        <% include _menu.html %>
+        <div class="col-md-11 col-md-offset-1 main">
+            <div class="container-fluid">
+            <a type="button" class="btn btn-info add" href="javascript:void(0);" onclick="addAddress()">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增站点
+        </a>
+            <a type="button" class="btn btn-info add" href="javascript:void(0);" onclick="addUserInfo()" style="margin-left: 50px;margin-right: 50px">
+                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>修改定价
+            </a>
+            <!--<button type="button" class="btn btn-info delete">-->
+                <!--<span class="glyphicon glyphicon-remove"  aria-hidden="true"></span> 取消站点-->
+            <!--</button>-->
+            <h4>当前每百公里价格:</h4>
+            <div style="float: left;">
+                <h4><span class="price" id="showWieghtPrice">--</span> 元/kg</h4>
+            </div>
+            <div style="float: left;margin-left: 200px">
+             <h4><span class="price" id="showcubePrice">--</span> 元/M3</h4>
+            </div>
+            <div style="float: left;margin-left: 200px">
+                <h4>起步价: <span class="price" id="showMinPrice">--</span>元</h4>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>已开站点</th>
+                    <th>坐标</th>
+                    <th>囤货体积</th>
+                    <th>开启时间</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--修改价格弹出的编辑框-->
+<div class="modal fade" id="mymodal">
+    <div class="modal-dialog" style="margin: 200px auto">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">修改定价</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="weightPrice">每公斤价格</label>
+                    <input type="number" id="weightPrice" class="form-control"   autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="cubePrice">每立方价格</label>
+                    <input type="number" id="cubePrice" class="form-control"  autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="minPrice">起步价</label>
+                    <input type="number" id="minPrice" class="form-control"  autocomplete="off">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="changePriceButton">保存</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!--增加站点的编辑框-->
+<div class="modal fade" id="addressModal">
+    <div class="modal-dialog" style="margin: 200px auto">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">新增站点</h4>
+            </div>
+            <div class="modal-body">
+                <div class="example form-group" style="width: 300px">
+                    <fieldset id="city_china">
+                        <p>省份：<select class="form-control" required id="province">
+                        </select></p>
+                        <p>城市：<select class="form-control" id="city"></select></p>
+                        <p>地区：<select class="form-control" id="conunty"></select></p>
+                    </fieldset>
+                </div>
+                <div class="form-group">
+                    <label for="volume">可用体积(立方米):</label>
+                    <input type="number" style="width: 100px" id="volume" class="form-control"   autocomplete="off">
+                </div>
+                <div class="modal-footer">
+                    <div style="float: left;">
+                        <h4>经度:<span class="price" id="longitudo">--</span></h4>
+                    </div>
+                    <div style="float: left;margin-left: 100px">
+                        <h4>纬度:<span class="price" id="latitude">--</span></h4>
+                    </div>
+                    <!--<label style="float: left" id="coordinate">经度:<p class="price" id="longitudo"></p></label>-->
+                    <!--<label style="float: left" >纬度::<p class="price" id="latitude"></p></label>-->
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="saveButton">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--点击站点名进入的编辑框-->
+<div class="modal fade" id="editAddressModal">
+    <div class="modal-dialog" style="margin: 200px auto">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">编辑站点</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <h4 id="editID"></h4>
+                    <h4 id="editAddressTitle"></h4>
+                </div>
+                <div class="form-group" >
+                    <label for="changeVolume">可用体积(立方米):</label>
+                    <input type="number" style="width: 100px" id="changeVolume" class="form-control"   autocomplete="off">
+                </div>
+                <button type="button" class="btn btn-primary" id="deleteAddress" style="margin-left: 230px">删除该站点</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="editSava">保存</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+<% include _foot.html %>
+
+<!--=================================================JS代码===================================================-->
+<script>
+    function refreshTable(){
+        $('.table').dataTable().fnClearTable();
+
+    }
+    var addressInfoArray;
+
+    var dataArray;
+
+    //表相关
+    $(function () {
+        //每页显示的数量
+        var pageSize = 15;
+        $('.table').dataTable({
+            "pagingType": "simple_numbers",//设置分页控件的模式
+            searching: false,//开启查询框
+            aLengthMenu: [pageSize],//每页显示的数量
+            "iDisplayLength": pageSize,
+            "bLengthChange": false,//屏蔽tables的一页展示多少条记录的下拉列表
+            aaSorting: [],
+            "oLanguage": {  //对表格国际化
+                "sLengthMenu": "每页显示 _MENU_条",
+                "sZeroRecords": "没有找到符合条件的数据",
+                "sInfo": "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
+                "sInfoEmpty": "没有记录",
+                "sInfoFiltered": "(从 _MAX_ 条记录中过滤)",
+                "sSearch": "搜索：",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "前一页",
+                    "sNext": "后一页",
+                    "sLast": "尾页"
+                }
+            },
+            stateSave: true,
+            "processing": true, //打开数据加载时的等待效果
+            "serverSide": true,//打开后台分页
+            "columns": [
+                {"orderable": false},
+                {"orderable": false},
+                {"orderable": false},
+                {"orderable": false},
+                {"orderable": false}
+            ],
+            "fnServerData": function (sSource, aoData, fnCallback) {
+                var start = aoData[3].value;
+                var length = aoData[4].value;
+                $.post('/address/query', {start: start, length: length}, function (res) {
+                    if (res.code >= 0) {
+                        dataArray = res.data.data;
+                        var ret = {recordsTotal: res.data.count, recordsFiltered: res.data.count, data: []}
+                        for (var i = 0; i < res.data.data.length; i++) {
+                            var obj = res.data.data[i];
+                            var item = [];
+                            item.push(obj.id);
+                            item.push('<a href="javascript:void(0);" onclick="editAddress(' + i + ')" data-index=i>' + obj.province + '-' + obj.city + '-' + obj.conunty + '</a>');
+                            item.push('(' + obj.longitudo + ',' + obj.latitude + ')');
+                            item.push(obj.volume+"m³ ");
+                            item.push('<span title="' + moment(obj.opentime).fromNow() + '">' + moment(obj.opentime).format('YYYY-MM-DD hh:mm:ss') + '</span>');
+                            ret.data.push(item);
+                        }
+                        fnCallback(ret);
+                    }
+
+                })
+            }
+        });
+    });
+    //显示添加用户信息的跳出框
+    var addUserInfo = function () {
+        $("#mymodal").modal("toggle");
+    }
+    //显示新增站点的跳出框
+    var addAddress = function () {
+        $('#addressModal').modal('toggle');
+        $.get('/getLogisticAddress',function (res) {
+            if(res.code<0){
+                return;
+            }else {
+                addressInfoArray = res.data.data;
+               //默认省/市/区都选择第一个
+                var provinceArray = [addressInfoArray[0].province];
+                var city;//去重的标识
+               for(var i=1;i<addressInfoArray.length;i++){
+                   if(addressInfoArray[i].province!=addressInfoArray[i-1].province){
+                       provinceArray.push(addressInfoArray[i].province);
+                   }
+                   if(addressInfoArray[0].province == addressInfoArray[i].province){
+                       if(city != addressInfoArray[i].city){
+                           $('#city').append('<option value="'+addressInfoArray[i].city+'">'+addressInfoArray[i].city+'</option>')
+                           city = addressInfoArray[i].city;
+                       };
+                   };
+                   if(addressInfoArray[0].city == addressInfoArray[i].city){
+                       $('#conunty').append('<option value="'+addressInfoArray[i].id+'">'+addressInfoArray[i].conunty+'</option>')
+                   }
+               }
+                //将省份信息注入html
+                for(var i = 0 ;i<provinceArray.length;i++){
+                    $('#province').append('<option value="'+provinceArray[i]+'">'+provinceArray[i]+'</option>')
+                }
+                showCoordinate();
+            }
+        })
+    }
+    //点击站点进入编辑
+    var editAddress = function (index) {
+        $("#editAddressModal").modal("toggle");
+        $('#changeVolume').val(dataArray[index].volume);
+        $('#editAddressTitle').html(dataArray[index].province+"-"+dataArray[index].city+"-"+dataArray[index].conunty+" ("+dataArray[index].longitudo+","+dataArray[index].latitude+")");
+        $('#editID').html(dataArray[index].id);
+    };
+
+    var refreshPrice = function () {
+        //查询当前的定价
+        $.get('/queryPrice',function (res) {
+            if(res.code<0){
+                return;
+            }else {
+                $('#showcubePrice').html(res.data.data[0].cubePrice);
+                $('#showWieghtPrice').html(res.data.data[0].weightPrice);
+                $('#showMinPrice').html(res.data.data[0].minPrice);
+                $('#cubePrice').val(res.data.data[0].cubePrice);
+                $('#weightPrice').val(res.data.data[0].weightPrice);
+                $('#minPrice').val(res.data.data[0].minPrice);
+            }
+        });
+    }
+    $(function () {
+       refreshPrice();
+    });
+    //点击新增站点
+    $("#changePriceButton").on('click',function (e) {
+        if(!confirm("确定修改吗?")){
+            return;
+        }
+        var cubePrice = $('#cubePrice').val();
+        var weightPrice = $('#weightPrice').val();
+        var minPrice = $('#minPrice').val();
+        $.post('/changePrice',{cubePrice:cubePrice,weightPrice:weightPrice,minPrice:minPrice},function (res) {
+            if(res.code < 0){
+                return alert('操作出错'+res.msg);
+            }
+            alert('操作成功');
+            $('#mymodal').modal('hide');
+            refreshPrice();
+        });
+    });
+
+
+
+    //select选项改变的触发
+    $("#province").on('change',function (e) {
+        //清空之前自选择项的数据
+        jQuery("#city").empty();
+        jQuery("#conunty").empty();
+        //匹配值注入
+        for(var i=0;i<addressInfoArray.length;i++){
+            var city;//去重的标识
+            var fristCity ;//区和市默认选择第一个
+            if($('#province').val() == addressInfoArray[i].province){
+                if(city != addressInfoArray[i].city){
+                    console.log("此次 city为"+city+"数组中的为"+addressInfoArray[i].city);
+                    $('#city').append('<option value="'+addressInfoArray[i].city+'">'+addressInfoArray[i].city+'</option>')
+                    city = addressInfoArray[i].city;
+                    if(!fristCity){
+                        fristCity = addressInfoArray[i].city;
+                    };
+                };
+            };
+            if( fristCity == addressInfoArray[i].city){
+                $('#conunty').append('<option value="'+addressInfoArray[i].id+'">'+addressInfoArray[i].conunty+'</option>')
+            };
+        };
+        showCoordinate();
+    });
+
+    $("#city").on('change',function (e) {
+        jQuery("#conunty").empty();
+        for(var i=0;i<addressInfoArray.length;i++){
+            if( $('#city').val() == addressInfoArray[i].city){
+                $('#conunty').append('<option value="'+addressInfoArray[i].id+'">'+addressInfoArray[i].conunty+'</option>')
+            };
+        }
+        showCoordinate();
+    });
+    $('#conunty').on('change',function () {
+        showCoordinate();
+    })
+    //点击保存按钮
+    $('#saveButton').on('click',function () {
+        var i = parseInt($('#conunty').val());
+        var volume = parseFloat($('#volume').val());
+        if( parseInt(addressInfoArray[i-1].status) == 1  ){
+            alert("该站点已经开启");
+            return;
+        }else {
+            if(!$('#volume').val()|| parseFloat($('#volume').val())<=0){
+                alert('请正确填写容积');
+                return;
+            }
+            $.post('/addAddress ',{id:i,volume:volume},function (res) {
+                if(res.code < 0){
+                    return alert('操作出错'+res.msg);
+                }else {
+                    alert('操作成功');
+                    $('#addressModal').modal('hide');
+                    refreshTable();
+                }
+            });
+        }
+    });
+    //刷新坐标数据
+    var showCoordinate = function () {
+        var i = parseInt($('#conunty').val());
+        $('#longitudo').html(addressInfoArray[i-1].longitudo);
+        $('#latitude').html(addressInfoArray[i-1].latitude);
+    }
+    //点击编辑的保存按钮
+    $('#editSava').on('click',function () {
+        var i = parseInt($('#editID').html());
+        var volume = parseFloat($('#changeVolume').val());
+        $.post('/changeAddress ',{id:i,volume:volume},function (res) {
+            if(res.code < 0){
+                return alert('操作出错'+res.msg);
+            }else {
+                alert('操作成功');
+                $('#editAddressModal').modal('hide');
+                refreshTable();
+            }
+        });
+    })
+    //点击删除按钮
+    $('#deleteAddress').on('click',function () {
+        if(!confirm("确定删除吗?")){
+            return;
+        }
+        var i = parseInt($('#editID').html());
+        $.post('/deleteAddress',{id:i},function (res) {
+            if(res.code < 0){
+                return alert('操作出错'+res.msg);
+            }else {
+                alert('操作成功');
+                $('#editAddressModal').modal('hide');
+                refreshTable();
+            }
+        });
+    })
+</script>

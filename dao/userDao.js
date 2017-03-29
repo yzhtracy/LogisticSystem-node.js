@@ -201,28 +201,15 @@ module.exports = {
             var permission = parseInt(req.body.permission);
             var userID = req.body.userID;
             var password = req.body.password;
-            connection.query('select * from users where userID = ? and status = 1',[userID],function(err, result){
+            connection.query('update users set password = ?,permission=? where id = ?;',[password,permission,userID],function(err, result){
                 var data;
                 if(err){
                     data = new msg(-1,err);
-                };
-                if(result.length == 0){
-                    data  = new msg(-1,"该手机号码还未注册!");
-                    res.json(data);
                 }else {
-                    connection.query('update users set password = ?,permission=? where username = ?;',[password,permission,username],function(err, result){
-                        var data;
-                        if(err){
-                            data = new msg(-1,err);
-                        }else {
-                            data = new msg(0,"成功");
-                            // req.session.user = result[0];
-                        }
-                        res.json(data);
-                    });
+                    data = new msg(0,"成功");
+                    // req.session.user = result[0];
                 }
-                // 释放连接
-                connection.release();
+                res.json(data);
             });
 
         });
