@@ -34,3 +34,19 @@ var postUrl = function(postUrl, data){
         that.successWithData();
     })
 }
+var ellipsis = function(){
+    $('.ellipsis').each(function(i, item){
+        $(item).attr('title', $(item).text());
+    })
+}
+
+$(function(){
+    if(!_.isUndefined(window.tab)){
+        $('.nav-sidebar li').each(function(i, item){
+            if($(item).find('a').attr('href') == tab){
+                $(this).addClass('active');
+            }
+        })
+    }
+    ellipsis();
+})

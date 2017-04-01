@@ -4,6 +4,9 @@ var router = express.Router();
 var cfg = require('../conf/cfg.js');
 var userDao = require('../dao/userDao.js');
 var priceDao = require('../dao/priceDao.js');
+var orderDao = require('../dao/orderDao');
+
+
 var multer  = require('multer');
 var formidable = require('formidable');
 var os = require('os');
@@ -81,7 +84,15 @@ router.get('/priceManage', function(req, res, next) {
 });
 
 
-
+//============================订单相关=================================
+//新增订单
+router.get('/createOrder',function (req,res,next) {
+  res.render('createOrder',{ user: req.session.user});
+})
+//查询订单表
+router.get('/orderlist',function (req,res,next) {
+  res.render('orderlist',{user:req.session.user});
+})
 
 
 //API接口
@@ -123,6 +134,16 @@ router.post('/deleteAddress',function (req,res,next) {
   priceDao.deleteAddress(req,res,next);
 })
 
+//===============================订单API=========================
+router.post('/order/queryAddress',function (req,res,next) {
+  orderDao.queryAddress(req,res,next);
+})
+router.post('/order/createOrder',function (req,res,next) {
+  orderDao.createOrder(req,res,next);
+})
 
+router.post('/order/query',function (req,res,next) {
+  orderDao.queryOrder(req,res,next);
+})
 
 module.exports = router;

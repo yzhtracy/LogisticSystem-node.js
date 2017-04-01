@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <% include _head.html %>
+    <title>订单管理</title>
+    <!--<link href="/css/order.css" rel="stylesheet">-->
+</head>
+<body>
+
+<% include _nav.html %>
+<div class="container-fluid">
+    <div class="row">
+        <% include _menu.html %>
+        <div class=" col-md-11 col-md-offset-1 main">
+
+            <div class="container-fluid">
+                <!--                <button type="button" class="btn btn-info edit">
+                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> 编辑
+                                </button>-->
+                <button type="button" class="btn btn-info delete hide">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> 删除
+                </button>
+
+                <div class="col-lg-10 pull-right" style="text-align: right;">
+                    <select id="order-status" style="height:26px;">
+                        <option value="">全部</option>
+                        <option value="1">待支付</option>
+                        <option value="2">待发货</option>
+                        <option value="8">已发货</option>
+                        <option value="3">交易成功</option>
+                        <option value="4">退货中</option>
+                        <option value="5">已取消</option>
+                        <option value="7">交易关闭</option>
+                    </select>
+                    <input type="date" id="start-date" style="width:130px;margin-left:20px;">
+                    <input type="time" id="start-time">
+                    &nbsp;-&nbsp;
+                    <input type="date" id="end-date" style="width:130px;">
+                    <input type="time" id="end-time">
+                    <input type="text" id='search' class="form-control  " placeholder="订单号/漫墅ID" style="width:155px;display:inline-block;margin-left:20px;">
+                    <button class="btn btn-info" id="querybtn">搜索</button>
+                </div>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th style="width:60px;">订单号</th>
+                        <th style="width:120px;">物流路径</th>
+                        <th style="width:90px;">发货人</th>
+                        <th style="width:90px;">收货人</th>
+                        <th style="width:60px;">手机</th>
+                        <th style="width:200px;">创建时间</th>
+                        <th style="width:40px;">总价</th>
+                        <th style="width:40px;">件数</th>
+                        <th style="width:60px;">状态</th>
+                        <th style="width:40px;">揽件人</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div> <!-- /container -->
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
+<% include _foot.html %>
+
+<script type="text/template" id="tmpl">
+    <form class="form-horizontal">
+        <input type="hidden" id="data-status">
+
+
+        <div class="form-group">
+            <label for="inputOrderId" class="col-sm-2 control-label">商品列表:</label>
+            <div class="col-sm-8 input-group">
+                <table class="table table-striped   no-footer">
+                    <thead>
+                    <th>商品</th>
+                    <th>数量</th>
+                    <th>价格</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
+
+        <div class="form-group">
+            <label for="inputOrderId" class="col-sm-2 control-label">订单号:</label>
+            <div class="col-sm-8 input-group">
+                <input type="text" class="form-control" id="inputOrderId" placeholder="订单号" required  disabled>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputFreightId" class="col-sm-2 control-label">快递公司:</label>
+            <div class="col-sm-8 input-group">
+                <!--<input type="text" class="form-control" id="inputFreightNo" placeholder="快递公司" required autofocus>-->
+                <select id="inputFreightId" class="form-control" required></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputFreightNo" class="col-sm-2 control-label">快递单号:</label>
+            <div class="col-sm-8 input-group">
+                <input type="text" class="form-control" id="inputFreightNo" placeholder="快递单号" required autofocus>
+            </div>
+        </div>
+
+
+        <!--        <div class="form-group submit-btns">
+                    <div class="col-sm-offset-2 col-sm-10 input-group">
+                        <button type="submit" class="submit btn btn-primary">提交</button>
+
+                        <a type="button" class="col-sm-offset-1 btn btn-default back" href='/orderlist'>
+                            取消
+                        </a>
+                    </div>
+
+                </div>-->
+    </form>
+
+</script>
+
+<script>
+    var tab= '/orderlist';
+    /*    var orderStatusMap = {
+     2: '<span class="label label-primary">已付款</span>',
+     8: '<span class="label label-success">已发货</span>'
+     }*/
+    function refreshTable(){
+        $('.table').eq(0).dataTable().fnDraw(false);
+    }
+    function updateBtnStatus(){
+        var checkboxs = $('.dataTable .checkbox:checked');
+        if(checkboxs.length == 0){
+            $('.btn.edit').attr('disabled', 'disabled');
+            $('.btn.delete').attr('disabled', 'disabled');
+        }else if(checkboxs.length == 1){
+            $('.btn.edit').attr('disabled', null);
+            $('.btn.delete').attr('disabled', null);
+        }else{
+            $('.btn.edit').attr('disabled', 'disabled');
+            $('.btn.delete').attr('disabled', null);
+        }
+    }
+
+    $(function(){
+        var order_status = '';
+        var start_date = '';
+        var end_date = '';
+        var search_key = '';
+        var pageSize = 15;
+        $('.table').dataTable({
+            "pagingType": "simple_numbers",//设置分页控件的模式
+            searching: false,//屏蔽datatales的查询框
+            aLengthMenu:[pageSize],//设置一页展示10条记录
+            "iDisplayLength": pageSize,
+            "bLengthChange": false,//屏蔽tables的一页展示多少条记录的下拉列表
+            aaSorting: [],
+            "oLanguage": {  //对表格国际化
+                "sLengthMenu": "每页显示 _MENU_条",
+                "sZeroRecords": "没有找到符合条件的数据",
+                //  "sProcessing": "&lt;img src=’./loading.gif’ /&gt;",
+                "sInfo": "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
+                "sInfoEmpty": "没有记录",
+                "sInfoFiltered": "(从 _MAX_ 条记录中过滤)",
+                "sSearch": "搜索：",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "前一页",
+                    "sNext": "后一页",
+                    "sLast": "尾页"
+                }
+            },
+            stateSave: true,
+            "processing": true, //打开数据加载时的等待效果
+            "serverSide": true,//打开后台分页
+            "columns": [
+                { "orderable": false },
+                { "orderable": false },
+                { "orderable": false },
+                { "orderable": false },
+                { "orderable": false },
+                { "orderable": false },
+                { "orderable": false },
+                { "orderable": false },
+                { "orderable": false },
+                { "orderable": false }
+            ],
+            "fnServerData" : function(sSource, aoData, fnCallback) {
+                var start = aoData[3].value;
+                var length = aoData[4].value;
+
+                $.post('/order/query', {order_status:order_status, start:start, length:length, start_date:start_date, end_date:end_date, search_key:search_key}, function(res){
+                    var ret = {recordsTotal: res.data.count,recordsFiltered:res.data.count, data:[]}
+                    for(var i=0;i<res.data.data.length;i++){
+                        var obj = res.data.data[i];
+                        var item = [];
+                        item.push('<a class="op_edit" href="javascript:;" data-id="'+obj.id+'">'+obj.id+'</a>');
+                        //item.push('<span>'+obj.orderId+'</span>');
+                        item.push('<span  data-toggle="tooltip" data-placement="top" title="'+obj.account+'">'+obj.startAddressID+obj.endAddressID+'</span>');
+                        item.push(obj.consignor);
+                        item.push(obj.consignee);
+                        item.push(obj.consignorPhoneNumber);
+                        item.push('<span title="'+moment(obj.createTime).fromNow()+'">'+moment(obj.createTime).format('YYYY-MM-DD hh:mm:ss')+'</span>');
+                        item.push(obj.price);
+                        item.push(obj.count);
+                        item.push(getOrderStatusText(obj.status));
+                        item.push(obj.confirmationPersonID);
+                        ret.data.push(item);
+                    }
+                    fnCallback(ret);
+
+                    updateBtnStatus();
+                })
+            }
+        });
+
+
+        /*        $('.btn.edit').on('click', function(e){
+         var id = $('.checkbox:checked').attr('data-id');
+         location.href='/order/edit?id='+id;
+         });
+
+
+         $('.btn.edit').attr('disabled', 'disabled');*/
+
+        $('.dataTable').delegate('input.checkbox', 'click', function(e){
+            updateBtnStatus();
+        });
+        $('.dataTable').delegate('.checkall', 'click', function(e){
+            $('.dataTable .checkbox').prop('checked', $(this).prop('checked'));
+            updateBtnStatus();
+        });
+        /*
+         $('#search').on('input', function(e){
+         //console.log($(this).val())
+         search_key = $(this).val();
+         refreshTable();
+         })*/
+        $('#order-status').on('change', function(e){
+            $('#querybtn').click();
+        })
+        $('#querybtn').on('click', function(e){
+            order_status = $('#order-status').val();
+            var startDate = $('#start-date').val();
+            var startTime = $('#start-time').val();
+            var endDate = $('#end-date').val();
+            var endTime = $('#end-time').val();
+            if(startDate && startTime){
+                start_date = new Date(startDate+' '+startTime).getTime();
+                start_date = start_date/1000;
+            }else if(!startDate && !startTime){
+                start_date = '';
+            }else{
+                return alert('请同时输入日期和时间');
+            }
+            if(endDate && endTime){
+                end_date = new Date(endDate+' '+endTime).getTime();
+                end_date = end_date/1000;
+            }else if(!endDate && !endTime){
+                end_date = '';
+            }else{
+                return alert('请同时输入日期和时间');
+            }
+            search_key = $('#search').val();
+            refreshTable();
+        })
+
+        $(document).on('click', '.op_edit', function(e){
+            e.preventDefault();
+            var orderId = $(this).attr('data-id');
+            var html = $('#tmpl').html();
+            var app;
+            var modal = new Modal('编辑', html, function(flag){
+                if(flag == 'ok'){
+                    app.submit();
+                }
+            })
+            app = new App(orderId, modal.$modal);
+            app.init();
+        })
+
+
+
+
+
+        //弹出框
+        var getFirstImg = function(imgstr){
+            return imgstr.split(',')[0]
+        }
+        var App = function(orderId, $modal, fn){
+            this.id = orderId;
+            this.action = '编辑';
+            this.$modal = $modal;
+            this.fn = fn;
+        };
+        App.prototype = {
+            init: function(){
+                var self = this;
+                this.loadData(function(){
+                    self.initHtml();
+                    self.initForm();
+                    self.bindEvent();
+                })
+            },
+            loadData: function(fn) {
+                fn();
+            },
+            initHtml: function() {
+
+            },
+            initForm: function(){
+                var self = this;
+                if(!self.id){
+
+                }else{
+                    $.when(
+                            $.get('/freight/query'),
+                            $.get('/order/get', {id:self.id})
+                    ).then(function(ret, ret2){
+                        ret = ret[0];
+                        ret2 = ret2[0];
+                        if(ret.code < 0){
+                            return alert('获取数据出错');
+                        }
+                        for(var i=0;i<ret.data.length;i++){
+                            var item = ret.data[i];
+                            self.$modal.find('#inputFreightId').append('<option value="'+item.code+'">'+item.str+'</option>')
+                        }
+                        var record = ret2.data.order[0];
+                        self.$modal.find('#data-status').val(record.status);
+                        self.$modal.find('#inputOrderId').val(record.orderId);
+                        self.$modal.find('#inputFreightId').val(record.freightId);
+                        self.$modal.find('#inputFreightNo').val(record.freight_no);
+                        for(var i=0;i<ret2.data.goods.length;i++){
+                            var item = ret2.data.goods[i];
+                            self.$modal.find('table tbody').append('<tr><td><img style="width:50px;height:50px;" src="'+getFirstImg(item.images)+'"><span>'+item.title+'</span></td><td>'+item.count+'</td><td>'+item.price+'</td></tr>')
+                        }
+                        self.$modal.find('table tbody').append('<tr><td colspan="3"><span>总价：'+record.goods_price+'</span><span style="margin-left:20px;">实付价：'+record.price+'</span><span style="margin-left:20px;">'+getOrderStatusText(record.status)+'</span></td></tr>')
+                    });
+                }
+
+            },
+            bindEvent: function() {
+                var self = this;
+
+                self.$modal.find('.submit').on('click', function(e){
+                    e.preventDefault();
+                    self.submit();
+                });
+            },
+            submit: function(){
+                var self = this;
+                var status = self.$modal.find('#data-status').val();
+                var orderId = self.$modal.find('#inputOrderId').val();
+                var freight_id = self.$modal.find('#inputFreightId').val();
+                var freight_no = self.$modal.find('#inputFreightNo').val();
+
+                $.post('/order/update', {orderId:orderId, freight_id:freight_id, freight_no:freight_no}, function(ret){
+                    if(ret.code < 0){
+                        return alert(ret.msg);
+                    }
+                    SuccessModal('提示', self.action+'成功');
+                    refreshTable();
+                })
+            }
+
+
+        };
+
+
+    });
+    function  getOrderStatusText(status) {
+        var str;
+        switch (status){
+            case 1 : str="待揽件";
+                break;
+            case 2 : str = "承运中";
+        }
+        return str;
+    }
+
+</script>
+

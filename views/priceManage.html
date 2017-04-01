@@ -151,14 +151,12 @@
 
 <!--=================================================JS代码===================================================-->
 <script>
+    var tab = '/priceManage';
     function refreshTable(){
         $('.table').dataTable().fnClearTable();
-
     }
     var addressInfoArray;
-
     var dataArray;
-
     //表相关
     $(function () {
         //每页显示的数量
@@ -225,6 +223,9 @@
     //显示新增站点的跳出框
     var addAddress = function () {
         $('#addressModal').modal('toggle');
+        if(addressInfoArray){
+            return;
+        }
         $.get('/getLogisticAddress',function (res) {
             if(res.code<0){
                 return;

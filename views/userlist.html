@@ -159,7 +159,7 @@
                             item.push(obj.id);
                             item.push('<a href="javascript:void(0);" onclick="editUserInfo('+i+')" data-index=i>'+obj.username+'</a>');
                             item.push(obj.permission==1?'管理员':obj.permission==2?'员工':'用户');
-                            item.push('<span title="'+moment(obj.createTime).fromNow()+'">'+moment(obj.create_at).format('YYYY-MM-DD hh:mm:ss')+'</span>');
+                            item.push('<span title="'+moment(obj.createTime).fromNow()+'">'+moment(obj.createTime).format('YYYY-MM-DD hh:mm:ss')+'</span>');
                             ret.data.push(item);
                         }
                         fnCallback(ret);

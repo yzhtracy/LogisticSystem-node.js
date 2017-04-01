@@ -2,22 +2,23 @@
     <ul class="nav nav-sidebar" style="">
         <!--最高管理员菜单-->
         <% if(user.permission == 1){ %>
-            <li class=""><a href="#">订单管理<span class="sr-only">(current)</span></a></li>
+            <li class=""><a href="/orderlist">订单管理<span class="sr-only">(current)</span></a></li>
             <li class=""><a href="/userlist">用户管理</a></li>
             <li class=""><a href="/priceManage">价格及站点管理</a></li>
             <li class=""><a href="#">情况总览</a></li>
+            <li class=""><a href="/createOrder">新增订单</a></li>
         <% } %>
         <!--普通员工菜单-->
         <% if(user.permission == 2){ %>
-        <li class=""><a href="#">我的订单<span class="sr-only">(current)</span></a></li>
-        <li class=""><a href="#">订单查询</a></li>
-        <li class=""><a href="#">新增收件</a></li>
-        <li class=""><a href="#">我的数据</a></li>
+            <li class=""><a href="/orderlist">我的订单<span class="sr-only">(current)</span></a></li>
+            <li class=""><a href="#">订单查询</a></li>
+            <li class=""><a href="/createOrder">新增收件</a></li>
+            <li class=""><a href="#">我的数据</a></li>
         <% } %>
         <!--用户菜单-->
         <% if(user.permission == 3){ %>
-        <li class=""><a href="#">我的订单<span class="sr-only">(current)</span></a></li>
-        <li><a href="#">我要寄件</a></li>
+            <li class=""><a href="/orderlist">我的订单<span class="sr-only">(current)</span></a></li>
+            <li><a href="/createOrder">我要寄件</a></li>
         <% } %>
     </ul>
 
