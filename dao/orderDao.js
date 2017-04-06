@@ -129,22 +129,23 @@ module.exports={
                 end_date = new Date().getTime()/1000;
             }
             //if(search_key){
-            var search_sql = ' and (id like "%'+search_key+'%" or suerId like "%'+search_key+'%") ';
+            var search_sql = ' and (orders.id like "%'+search_key+'%" or orders.userId like "%'+search_key+'%") ';
             //}else{
             //    var search_sql = '';
             //}
-            var order_status_sql = ' and status like "%'+order_status+'%" ';
+            var order_status_sql = ' and orders.status like "%'+order_status+'%" ';
 
-            connection.query(' select * from orders where status > 0 ', function(err, result) {
+            connection.query('select orders.*,a.province as province1,a.city as city1 ,b.province as province2,b.city as city2 from orders left join chinaCity as a on orders.startAddressID = a.id left join chinaCity as b on orders.endAddressID = b.id where a.`status`>0 '+search_sql+order_status_sql+' and orders.createTime BETWEEN FROM_UNIXTIME(?) and FROM_UNIXTIME(?) order by orders.createTime DESC limit ?,?', [start_date, end_date, start, length], function(err, result) {
                 if(err){
                     return res.json(new msg(-1, err));
                 }
-                // connection.query('select count(1) from `orders` as a left join user as c on a.userId = c.id where (a.status > 0) '+search_sql+order_status_sql+' and a.create_at >= FROM_UNIXTIME(?) and a.create_at <= FROM_UNIXTIME(?) ', [start_date, end_date], function(err, result2) {
-                    res.json(new msg(0, '', {count: 30, data: result}));
-                // });
+                connection.query('select count(1) from `orders` where (status > 0) '+search_sql+order_status_sql+' and orders.createTime >= FROM_UNIXTIME(?) and orders.createTime <= FROM_UNIXTIME(?) ', [start_date, end_date], function(err, result2) {
+                    res.json(new msg(0, '', {count: result2[0]['count(1)'], data: result}));
+                });
                 // 释放连接
                 connection.release();
             });
         });
     }
 };
+
