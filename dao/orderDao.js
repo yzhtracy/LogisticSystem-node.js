@@ -84,29 +84,76 @@ module.exports={
                             var longitudoDi = Math.pow((addressResult[0].longitudo-addressResult[1].longitudo)*85.39/100,2);
                             var latitudeDi = Math.pow((addressResult[0].latitude-addressResult[1].latitude)*111/100,2);
                             var distances = Math.sqrt(longitudoDi+latitudeDi);
+
                             //取价格的最大值
                             var totalPrice = weight*weightPrice*distances>minPrice?weight*weightPrice*distances:minPrice;
                             totalPrice = totalPrice>volume*volumePrice*distances?totalPrice:volume*volumePrice*distances;
                             totalPrice = totalPrice.toFixed(2);
-                            connection.query('INSERT INTO orders (userId, price, consignor,consignee,consignorAddress,consigneeAddress,weight,volume,consignorPhoneNumber,consigneePhoneNumber,startAddressID,endAddressID,count,status,confirmationPersonID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);',
-                                [parseInt(req.session.user.id),parseFloat(totalPrice),consignor,consignee,consignorAddress,consigneeAddress,weight,volume,consignorPhoneNumber,consigneePhoneNumber,startAddressID,endAddressID,count,status,confirmationPersonID]
-                                ,function (err,result) {
-                                if(err){
-                                    data = new msg(-1,err);
-                                    res.json(data);
-                                    connection.release();
-                                }else {
-                                    console.log('成功');
-                                    data = new msg(0,"成功",[]);
-                                    res.json(data);
-                                    connection.release();
-                                }
-                            });
 
+                            //新建事务,同时向物流表及订单表中添加数据
+                            connection.beginTransaction(function(err) {
+                                if (err) { throw err; }
+                                connection.query('INSERT INTO orders (userId, price, consignor,consignee,consignorAddress,consigneeAddress,weight,volume,consignorPhoneNumber,consigneePhoneNumber,startAddressID,endAddressID,count,status,confirmationPersonID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);',
+                                    [parseInt(req.session.user.id),parseFloat(totalPrice),consignor,consignee,consignorAddress,consigneeAddress,weight,volume,consignorPhoneNumber,consigneePhoneNumber,startAddressID,endAddressID,count,status,confirmationPersonID]
+                                    ,function (err,result) {
+                                    if (err) {
+                                        return connection.rollback(function() {
+                                            data = new msg(-1,err);
+                                            res.json(data);
+                                            connection.release();
+                                        });
+                                    }
+                                        var description = status==2?"订单揽件成功,准备发往目的地":"下单成功,等待揽收";
+                                        connection.query('INSERT INTO logistics (description,operator,status) VALUES(?,?,?)',[description,req.session.user.id,status],function (err,logisticResult) {
+                                        if (err) {
+                                            return connection.rollback(function() {
+                                                data = new msg(-1,err);
+                                                res.json(data);
+                                                connection.release();
+                                            });
+                                        }
+                                        connection.commit(function(err) {
+                                            if (err) {
+                                                return connection.rollback(function() {
+                                                    data = new msg(-1,err);
+                                                    res.json(data);
+                                                    connection.release();
+                                                });
+                                            }
+                                            console.log('成功');
+                                            data = new msg(0,"成功",[]);
+                                            res.json(data);
+                                            connection.release();
+                                        });
+                                    });
+                                });
+                            });
+                            // connection.query('INSERT INTO orders (userId, price, consignor,consignee,consignorAddress,consigneeAddress,weight,volume,consignorPhoneNumber,consigneePhoneNumber,startAddressID,endAddressID,count,status,confirmationPersonID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);',
+                            //     [parseInt(req.session.user.id),parseFloat(totalPrice),consignor,consignee,consignorAddress,consigneeAddress,weight,volume,consignorPhoneNumber,consigneePhoneNumber,startAddressID,endAddressID,count,status,confirmationPersonID]
+                            //     ,function (err,result) {
+                            //     if(err){
+                            //         data = new msg(-1,err);
+                            //         res.json(data);
+                            //         connection.release();
+                            //     }else {
+                            //         var description = "订单揽件成功,准备发往目的地";
+                            //         var status = 2;
+                            //         connection.query('INSERT INTO logistics (description,operator,status) VALUES (?,?,?);',[description,req.session.user.id,status],function (err,logisticResult) {
+                            //             if(err){
+                            //                 data = new msg(-1,err);
+                            //                 res.json(data);
+                            //                 connection.release();
+                            //             }else {
+                            //                 console.log('成功');
+                            //                 data = new msg(0,"成功",[]);
+                            //                 res.json(data);
+                            //                 connection.release();
+                            //             }
+                            //         });
+                            //     }
+                            // });
                         }
                     });
-
-
                 }
             });
         });
@@ -163,7 +210,7 @@ module.exports={
                         data = new msg(-1,null);
                         res.json(data);
                         connection.release();
-                        
+
                     }else {
                         data = new msg(0, '成功', {data: result});
                         res.json(data);
