@@ -146,6 +146,32 @@ module.exports={
                 connection.release();
             });
         });
+    },queryOrderDetail:function (req,res,next) {
+        pool.getConnection(function (err, connection) {
+            if (err) {
+                throw err;
+            }
+            var ID = req.body.ID;
+            connection.query('select orders.*,a.province as province1,a.city as city1 ,b.province as province2,b.city as city2 from orders left join chinaCity as a on orders.startAddressID = a.id left join chinaCity as b on orders.endAddressID = b.id where orders.id = ?',ID,function (err,result) {
+                if(err){
+                    data = new msg(-1,err);
+                    res.json(data);
+                    connection.release();
+                }else {
+                    //如果请求者非寄件人或工作管理人员则返回失败数据
+                    if(result.userID!=ID&&req.session.user.permission == 3){
+                        data = new msg(-1,null);
+                        res.json(data);
+                        connection.release();
+                        
+                    }else {
+                        data = new msg(0, '成功', {data: result});
+                        res.json(data);
+                        connection.release();
+                    }
+                }
+            });
+        });
     }
 };
 

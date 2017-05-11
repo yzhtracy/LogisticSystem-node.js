@@ -197,7 +197,7 @@
                     for(var i=0;i<res.data.data.length;i++){
                         var obj = res.data.data[i];
                         var item = [];
-                        item.push('<a class="op_edit" href="javascript:;" data-id="'+obj.id+'">'+obj.id+'</a>');
+                        item.push('<a class="op_edit" href="/orderDetail?id='+obj.id+'" data-id="'+obj.id+'">'+obj.id+'</a>');
                         //item.push('<span>'+obj.orderId+'</span>');
                         item.push('<span  data-toggle="tooltip" data-placement="top" title="'+obj.account+'">'+obj.province1+"-"+obj.city1+' 至 '+obj.province2+"-"+obj.city2+'</span>');
                         item.push(obj.consignor);
@@ -206,7 +206,7 @@
                         item.push('<span title="'+moment(obj.createTime).fromNow()+'">'+moment(obj.createTime).format('YYYY-MM-DD hh:mm:ss')+'</span>');
                         item.push(obj.price);
                         item.push(obj.count);
-                        item.push('<a class="op_edit" href="javascript:;" data-id="'+obj.id+'">'+getOrderStatusText(obj.status)+'</a>');
+                        item.push('<a class="op_edit" href="/orderDetail?id='+obj.id+'" onclick="showdetailPage('+obj.id+')" data-id="'+obj.id+'">'+getOrderStatusText(obj.status)+'</a>');
                         item.push(obj.confirmationPersonID);
                         ret.data.push(item);
                     }
@@ -265,120 +265,32 @@
             }
             search_key = $('#search').val();
             refreshTable();
-        })
-
-        $(document).on('click', '.op_edit', function(e){
-            e.preventDefault();
-            var orderId = $(this).attr('data-id');
-            var html = $('#tmpl').html();
-            var app;
-            var modal = new Modal('编辑', html, function(flag){
-                if(flag == 'ok'){
-                    app.submit();
-                }
-            })
-            app = new App(orderId, modal.$modal);
-            app.init();
-        })
+        });
 
 
 
 
 
-        //弹出框
-        var getFirstImg = function(imgstr){
-            return imgstr.split(',')[0]
-        }
-        var App = function(orderId, $modal, fn){
-            this.id = orderId;
-            this.action = '编辑';
-            this.$modal = $modal;
-            this.fn = fn;
-        };
-        App.prototype = {
-            init: function(){
-                var self = this;
-                this.loadData(function(){
-                    self.initHtml();
-                    self.initForm();
-                    self.bindEvent();
-                })
-            },
-            loadData: function(fn) {
-                fn();
-            },
-            initHtml: function() {
-
-            },
-            initForm: function(){
-                var self = this;
-                if(!self.id){
-
-                }else{
-                    $.when(
-                            $.get('/freight/query'),
-                            $.get('/order/get', {id:self.id})
-                    ).then(function(ret, ret2){
-                        ret = ret[0];
-                        ret2 = ret2[0];
-                        if(ret.code < 0){
-                            return alert('获取数据出错');
-                        }
-                        for(var i=0;i<ret.data.length;i++){
-                            var item = ret.data[i];
-                            self.$modal.find('#inputFreightId').append('<option value="'+item.code+'">'+item.str+'</option>')
-                        }
-                        var record = ret2.data.order[0];
-                        self.$modal.find('#data-status').val(record.status);
-                        self.$modal.find('#inputOrderId').val(record.orderId);
-                        self.$modal.find('#inputFreightId').val(record.freightId);
-                        self.$modal.find('#inputFreightNo').val(record.freight_no);
-                        for(var i=0;i<ret2.data.goods.length;i++){
-                            var item = ret2.data.goods[i];
-                            self.$modal.find('table tbody').append('<tr><td><img style="width:50px;height:50px;" src="'+getFirstImg(item.images)+'"><span>'+item.title+'</span></td><td>'+item.count+'</td><td>'+item.price+'</td></tr>')
-                        }
-                        self.$modal.find('table tbody').append('<tr><td colspan="3"><span>总价：'+record.goods_price+'</span><span style="margin-left:20px;">实付价：'+record.price+'</span><span style="margin-left:20px;">'+getOrderStatusText(record.status)+'</span></td></tr>')
-                    });
-                }
-
-            },
-            bindEvent: function() {
-                var self = this;
-
-                self.$modal.find('.submit').on('click', function(e){
-                    e.preventDefault();
-                    self.submit();
-                });
-            },
-            submit: function(){
-                var self = this;
-                var status = self.$modal.find('#data-status').val();
-                var orderId = self.$modal.find('#inputOrderId').val();
-                var freight_id = self.$modal.find('#inputFreightId').val();
-                var freight_no = self.$modal.find('#inputFreightNo').val();
-
-                $.post('/order/update', {orderId:orderId, freight_id:freight_id, freight_no:freight_no}, function(ret){
-                    if(ret.code < 0){
-                        return alert(ret.msg);
-                    }
-                    SuccessModal('提示', self.action+'成功');
-                    refreshTable();
-                })
-            }
-
-
-        };
 
     });
+    //根据状态转换中文
     function  getOrderStatusText(status) {
         var str;
         switch (status){
             case 1 : str="待揽件";
                 break;
             case 2 : str = "承运中";
+                break;
+            case 3 : str = "待收货";
+                break;
+            case 4 : str = "已完成";
+                break;
+            case 5 : str = "已关闭";
+                break;
         }
         return str;
     }
+
 
 </script>
 

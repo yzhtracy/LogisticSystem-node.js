@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <% include _head.html %>
+    <title>订单详情</title>
+    <link href="/css/userlist.css" rel="stylesheet">
+</head>
+<body style="">
+<% include _nav.html %>
+<div class="container-fluid">
+    <div class="row">
+        <% include _menu.html %>
+        <div class="col-ml-11 col-md-offset-1 main">
+            <div class="container-fluid">
+                <a type="button" class="btn btn-info back" href="/orderlist">
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> 返回
+                </a>
+
+                <form class="form-horizontal">
+                    <label style="padding-top: 50px">基本信息</label>
+                    <input type="hidden" id="data-id">
+                    <input type="hidden" id="data-status">
+                    <div class="form-group">
+                        <label class="col-md-offset-2">订单编号:</label>
+                        <label class="orderID">*******</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-offset-2">配送站点:</label>
+                        <label class="logistics">*******</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-offset-2">总价格(元):</label>
+                        <label class="price">*******</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-offset-2">下单用户:</label>
+                        <label class="userID">*******</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-offset-2">寄件人姓名:</label>
+                        <label class="consignor">*******</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-offset-2">寄件人联系方式:</label>
+                        <label class="consignorPhoneNumber">*******</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-offset-2">寄件人地址:</label>
+                        <label class="consignorAddress">*******</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-offset-2">收件人姓名:</label>
+                        <label class="consignee">*******</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-offset-2">收件人联系方式:</label>
+                        <label class="consigneePhoneNumber">*******</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-offset-2">收件人地址:</label>
+                        <label class="consigneeAddress">*******</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-offset-2">总重量(kg):</label>
+                        <label class="weight">*******</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-offset-2">总体积(m³):</label>
+                        <label class="volume">*******</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-offset-2">数量(件):</label>
+                        <label class="count">*******</label>
+                    </div>
+                    <label>物流信息</label>
+                </form>
+
+                <table id="versionlist" class="table table-striped col-md-offset-1" style="width:480px;float:left;height: 400px;display: block;overflow: auto;font-size:13px;" border="1" borderColor="#ccc" rules="rows" cellspacing="0" >
+                    <thead>
+                    <tr>
+                        <!--<th><input class="checkall" type="checkbox"></th>-->
+                        <th style="width: 100px;text-align: center">发生时间</th>
+                        <th style="width: 200px;text-align: center">事件</th>
+                        <th style="width: 90px;text-align: center">操作人</th>
+                        <th style="width: 90px;text-align: center">状态</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<% include _foot.html %>
+
+<!--=================================================JS代码===================================================-->
+<script>
+    var ID = getQueryStringByName('ID');
+    //请求数据
+    $.post('/order/detailQuery', {ID:ID}, function (res) {
+        if (res.code >= 0) {
+            $('.orderID').html(res.data.data[0].id);
+            $('.logistics').html(res.data.data[0].city1+" 到 "+res.data.data[0].city2);
+            $('.userID').html(res.data.data[0].userId);
+            $('.consignor').html(res.data.data[0].consignor);
+            $('.consignorPhoneNumber').html(res.data.data[0].consignorPhoneNumber);
+            $('.consignorAddress').html(res.data.data[0].consignorAddress);
+            $('.consignee').html(res.data.data[0].consignee);
+            $('.consigneePhoneNumber').html(res.data.data[0].consigneePhoneNumber);
+            $('.consigneeAddress').html(res.data.data[0].consigneeAddress);
+            $('.weight').html(res.data.data[0].weight);
+            $('.volume').html(res.data.data[0].volume);
+            $('.count').html(res.data.data[0].count);
+            $('.price').html(res.data.data[0].price);
+        }
+
+    })
+</script>

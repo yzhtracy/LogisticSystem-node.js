@@ -94,6 +94,9 @@ router.get('/orderlist',function (req,res,next) {
   res.render('orderlist',{user:req.session.user});
 })
 
+router.get('/orderDetail',function (req,res,next) {
+  res.render('orderDetail',{user:req.session.user});
+})
 
 //API接口
 //============================用户管理API=============================
@@ -144,6 +147,10 @@ router.post('/order/createOrder',function (req,res,next) {
 
 router.post('/order/query',function (req,res,next) {
   orderDao.queryOrder(req,res,next);
+})
+
+router.post('/order/detailQuery',function (req,res,next) {
+  orderDao.queryOrderDetail(req,res,next );
 })
 
 module.exports = router;
