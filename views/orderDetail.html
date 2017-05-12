@@ -15,6 +15,12 @@
                 <a type="button" class="btn btn-info back" href="/orderlist">
                     <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> 返回
                 </a>
+                <!--最高权限可以删除订单-->
+                <% if(user.permission == 1){ %>
+                <button type="button" class="btn btn-info delete">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> 删除该订单
+                </button>
+                <% } %>
 
                 <form class="form-horizontal">
                     <label style="padding-top: 50px">基本信息</label>
@@ -24,7 +30,7 @@
                         <label class="col-md-offset-2">订单编号:</label>
                         <label class="orderID">*******</label>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group">`
                         <label class="col-md-offset-2">配送站点:</label>
                         <label class="logistics">*******</label>
                     </div>
@@ -87,6 +93,7 @@
                     </thead>
                     <tbody></tbody>
                 </table>
+
             </div>
         </div>
     </div>
@@ -117,4 +124,19 @@
         }
 
     })
+
+    //删除按钮触发
+    $('.btn.delete').on('click', function(e){
+        if(!confirm("确定删除吗?")){
+            return;
+        }
+        postUrl('/deleteOrder', {orderID:ID});
+
+    });
+
+    //删除成成功的回调函数
+    var successWithData = function () {
+        alert('删除成功');
+        window.location.href = "/orderlist";
+    }
 </script>

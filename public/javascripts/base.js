@@ -58,3 +58,20 @@ function getQueryStringByName(name){
     }
     return result[1];
 }
+//根据状态转换中文
+function  getOrderStatusText(status) {
+    var str;
+    switch (status){
+        case 1 : str="待揽件";
+            break;
+        case 2 : str = "承运中";
+            break;
+        case 3 : str = "待收货";
+            break;
+        case 4 : str = "已完成";
+            break;
+        case 5 : str = "已关闭";
+            break;
+    }
+    return str;
+}

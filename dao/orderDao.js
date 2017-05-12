@@ -103,28 +103,41 @@ module.exports={
                                             connection.release();
                                         });
                                     }
-                                        var description = status==2?"订单揽件成功,准备发往目的地":"下单成功,等待揽收";
-                                        connection.query('INSERT INTO logistics (description,operator,status) VALUES(?,?,?)',[description,req.session.user.id,status],function (err,logisticResult) {
-                                        if (err) {
-                                            return connection.rollback(function() {
-                                                data = new msg(-1,err);
-                                                res.json(data);
-                                                connection.release();
-                                            });
-                                        }
-                                        connection.commit(function(err) {
-                                            if (err) {
+                                        //查询刚刚插入的数据id
+                                        var orderID;
+                                        connection.query('select last_insert_id()',function (err,IDresult) {
+                                            if(err){
                                                 return connection.rollback(function() {
                                                     data = new msg(-1,err);
                                                     res.json(data);
                                                     connection.release();
                                                 });
                                             }
-                                            console.log('成功');
-                                            data = new msg(0,"成功",[]);
-                                            res.json(data);
-                                            connection.release();
-                                        });
+                                            orderID = IDresult[0]['last_insert_id()'];
+                                            var description = status==2?"订单揽件成功,准备发往目的地":"下单成功,等待揽收";
+                                            connection.query('INSERT INTO logistics (description,operator,status,orderID) VALUES(?,?,?,?)',[description,req.session.user.id,status,orderID],function (err,logisticResult) {
+                                                if (err) {
+                                                    return connection.rollback(function() {
+                                                        data = new msg(-1,err);
+                                                        res.json(data);
+                                                        connection.release();
+                                                    });
+                                                }
+                                                connection.commit(function(err) {
+                                                    if (err) {
+                                                        return connection.rollback(function() {
+                                                            data = new msg(-1,err);
+                                                            res.json(data);
+                                                            connection.release();
+                                                        });
+                                                    }
+                                                    console.log('成功');
+                                                    data = new msg(0,"成功",[]);
+                                                    res.json(data);
+                                                    connection.release();
+                                                });
+                                        })
+
                                     });
                                 });
                             });
@@ -157,7 +170,8 @@ module.exports={
                 }
             });
         });
-    },queryOrder:function (req,res,next) {
+    },//查询订单表
+    queryOrder:function (req,res,next) {
         pool.getConnection(function(err, connection) {
             if(err){
                 throw err;
@@ -182,7 +196,7 @@ module.exports={
             //}
             var order_status_sql = ' and orders.status like "%'+order_status+'%" ';
 
-            connection.query('select orders.*,a.province as province1,a.city as city1 ,b.province as province2,b.city as city2 from orders left join chinaCity as a on orders.startAddressID = a.id left join chinaCity as b on orders.endAddressID = b.id where a.`status`>0 '+search_sql+order_status_sql+' and orders.createTime BETWEEN FROM_UNIXTIME(?) and FROM_UNIXTIME(?) order by orders.createTime DESC limit ?,?', [start_date, end_date, start, length], function(err, result) {
+            connection.query('select orders.*,a.province as province1,a.city as city1 ,b.province as province2,b.city as city2 from orders left join chinaCity as a on orders.startAddressID = a.id left join chinaCity as b on orders.endAddressID = b.id where a.`status`>0 and orders.status>0'+search_sql+order_status_sql+' and orders.createTime BETWEEN FROM_UNIXTIME(?) and FROM_UNIXTIME(?) order by orders.createTime DESC limit ?,?', [start_date, end_date, start, length], function(err, result) {
                 if(err){
                     return res.json(new msg(-1, err));
                 }
@@ -193,7 +207,8 @@ module.exports={
                 connection.release();
             });
         });
-    },queryOrderDetail:function (req,res,next) {
+    },//查看订单详情
+    queryOrderDetail:function (req,res,next) {
         pool.getConnection(function (err, connection) {
             if (err) {
                 throw err;
@@ -217,6 +232,26 @@ module.exports={
                         connection.release();
                     }
                 }
+            });
+        });
+    },//删除订单
+    deleteOrder:function (req,res,next) {
+        //判断用户的权限
+        if(req.session.user.permission != 1){
+            res.json(new msg(-1,""));
+            return;
+        }
+        pool.getConnection(function(err, connection) {
+            if(err){
+                throw err;
+            }
+            var orderID = req.body.orderID;
+            connection.query('update orders set status=0 where id = ?',[orderID], function(err, result) {
+                if(err){
+                    return res.json(new msg(-1, err));
+                }
+                res.json(new msg(0, ''));
+                connection.release();
             });
         });
     }
