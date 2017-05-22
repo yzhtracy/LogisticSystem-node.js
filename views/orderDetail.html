@@ -4,6 +4,11 @@
     <% include _head.html %>
     <title>订单详情</title>
     <link href="/css/userlist.css" rel="stylesheet">
+    <style type="text/css">
+        .table > tr > td {
+            text-align: center;
+        }
+    </style>
 </head>
 <body style="">
 <% include _nav.html %>
@@ -81,12 +86,12 @@
                     <label>物流信息</label>
                 </form>
 
-                <table id="versionlist" class="table table-striped col-md-offset-1" style="width:480px;float:left;height: 400px;display: block;overflow: auto;font-size:13px;" border="1" borderColor="#ccc" rules="rows" cellspacing="0" >
+                <table id="logisticsList" class="table table-striped col-md-offset-1" style="width:600px;float:left;height: 400px;display: block;overflow: auto;font-size:13px;" border="1" borderColor="#ccc" rules="rows" cellspacing="0" >
                     <thead>
                     <tr>
                         <!--<th><input class="checkall" type="checkbox"></th>-->
-                        <th style="width: 100px;text-align: center">发生时间</th>
-                        <th style="width: 200px;text-align: center">事件</th>
+                        <th style="width: 200px;text-align: center">发生时间</th>
+                        <th style="width: 220px;text-align: center">事件</th>
                         <th style="width: 90px;text-align: center">操作人</th>
                         <th style="width: 90px;text-align: center">状态</th>
                     </tr>
@@ -95,9 +100,51 @@
                 </table>
 
             </div>
+            <% if(user.permission != 3){ %>
+            <div class="form-group" style="padding-left: 320px">
+                <a type="button" class="btn btn-info add" href="javascript:void(0);" onclick="addLigisticsInfo()">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加物流信息
+                </a>
+            </div>
+            <% } %>
         </div>
     </div>
 </div>
+<!--弹出的编辑框-->
+<div class="modal fade" id="mymodal">
+    <div class="modal-dialog" style="margin: 200px auto">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">添加物流信息</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="description">事件</label>
+                    <input type="text" id="description" class="form-control" placeholder="请输入物流事件"  autocomplete="off" >
+                </div>
+                <div class="form-group">
+                    <label for="inputFreightId" class="col-sm-2 control-label" style="margin-top: 10px;margin-left: -10px;">物流状态:</label>
+                    <div class="col-sm-8 input-group">
+                        <!--<input type="text" class="form-control" id="inputFreightNo" placeholder="快递公司" required autofocus>-->
+                        <select id="inputFreightId" class="form-control" required>
+                            <option value="2">承运中</option>
+                            <option value="3">已到达</option>
+                            <option value="4">已完成</option>
+                            <option value="1">待收件</option>
+                            <option value="5">取消</option>
+                            <option value="6">异常</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="saveButton">保存</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 </body>
 </html>
 <% include _foot.html %>
@@ -139,4 +186,58 @@
         alert('删除成功');
         window.location.href = "/orderlist";
     }
+    //物流信息表的数据读取
+    var updateVText = function(){
+        $.post('/order/queryLogistics',{orderID:ID}, function(res){
+            $('#logisticsList tbody').html('');
+            var LogistcData = res.data.data;
+            for(var i=0;i<LogistcData.length;i++){
+                $('#logisticsList tbody').append('<tr><td>'+moment(LogistcData[i].time).format('YYYY-MM-DD hh:mm:ss')+'</td><td>'+LogistcData[i].description+'</td><td>'+LogistcData[i].operator+'</td><td >'+startString(LogistcData[i].status)+'</td></tr>');
+            }
+        })
+    }
+    updateVText();
+
+    //状态码翻译
+    var startString = function (number) {
+        number = parseInt(number);
+        switch(number)
+        {
+            case 1:return "待收件"
+                break;
+            case 2:return "承运中"
+            break;
+            case 3:return "已到达"
+                break;
+            case 4:return "已完成"
+                break;
+            case 5:return "取消"
+            break;
+            case 6:return "异常"
+                break;
+        }
+    }
+    //添加物流信息
+    var addLigisticsInfo = function () {
+        $("#mymodal").modal("toggle");
+    }
+    //保存按钮触发
+    $("#saveButton").click(function () {
+        var description = $("#description").val();
+        var status = $("#inputFreightId").val();
+        if(!description){
+            alert("请完整填写物流信息!");
+            return;
+        }
+        $.post('/order/addLogistics', {description:description,status:status,orderID:ID}, function(res){
+            if(res.code < 0){
+                //失败
+                return alert(res.msg);
+            }
+            //成功
+            alert('操作成功');
+            location.reload();
+        })
+
+    });
 </script>

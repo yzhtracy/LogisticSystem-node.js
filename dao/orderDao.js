@@ -254,6 +254,43 @@ module.exports={
                 connection.release();
             });
         });
+    },//查询物流信息
+    queryLogistics:function (req,res,next) {
+        pool.getConnection(function (err,connection) {
+            if(err){
+                throw  err;
+            }
+            var orderID = req.body.orderID;
+            connection.query('select * from logistics where orderID = ?',[orderID],function (err,result) {
+                if(err){
+                    return res.json(new msg(-1, err));
+                }
+                data = new msg(0, '成功', {data: result});
+                res.json(data);
+                connection.release;
+            })
+        })
+    },//添加物流信息
+    addLogistics:function (req,res,next) {
+        if(req.session.user.permission != 1&&req.session.user.permission != 2){
+            res.json(new msg(-1,""));
+            return;
+        }
+        pool.getConnection(function (err,connection) {
+            if (err) {
+                throw  err;
+            }
+            var orderID = req.body.orderID;
+            var description = req.body.description;
+            var status = req.body.status;
+            connection.query('INSERT INTO logistics (description,operator,status,orderID) VALUES(?,?,?,?)', [description, req.session.user.id, status, orderID], function (err, result) {
+                if (err) {
+                    return res.json(new msg(-1, err));
+                }
+                res.json(new msg(0, ''));
+                connection.release();
+            })
+        })
     }
 };
 

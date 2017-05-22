@@ -155,5 +155,11 @@ router.post('/order/detailQuery',function (req,res,next) {
 router.post('/deleteOrder',function (req,res,next) {
   orderDao.deleteOrder(req,res,next);
 })
+router.post('/order/queryLogistics',function (req,res,next) {
+  orderDao.queryLogistics(req,res,next);
+})
+router.post('/order/addLogistics',function (req,res,next) {
+  orderDao.addLogistics(req,res,next);
+})
 
 module.exports = router;
