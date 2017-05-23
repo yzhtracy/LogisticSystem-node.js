@@ -198,7 +198,9 @@ module.exports={
 
             connection.query('select orders.*,a.province as province1,a.city as city1 ,b.province as province2,b.city as city2 from orders left join chinaCity as a on orders.startAddressID = a.id left join chinaCity as b on orders.endAddressID = b.id where a.`status`>0 and orders.status>0'+search_sql+order_status_sql+' and orders.createTime BETWEEN FROM_UNIXTIME(?) and FROM_UNIXTIME(?) order by orders.createTime DESC limit ?,?', [start_date, end_date, start, length], function(err, result) {
                 if(err){
-                    return res.json(new msg(-1, err));
+                    res.json(new msg(-1, err));
+                    connection.release();
+                    return;
                 }
                 connection.query('select count(1) from `orders` where (status > 0) '+search_sql+order_status_sql+' and orders.createTime >= FROM_UNIXTIME(?) and orders.createTime <= FROM_UNIXTIME(?) ', [start_date, end_date], function(err, result2) {
                     res.json(new msg(0, '', {count: result2[0]['count(1)'], data: result}));
@@ -210,31 +212,32 @@ module.exports={
     },//查看订单详情
     queryOrderDetail:function (req,res,next) {
         pool.getConnection(function (err, connection) {
-            if (err) {
-                throw err;
-            }
-            var ID = req.body.ID;
-            connection.query('select orders.*,a.province as province1,a.city as city1 ,b.province as province2,b.city as city2 from orders left join chinaCity as a on orders.startAddressID = a.id left join chinaCity as b on orders.endAddressID = b.id where orders.id = ?',ID,function (err,result) {
-                if(err){
-                    data = new msg(-1,err);
+        if (err) {
+            throw err;
+        }
+        var ID = req.body.ID;
+        connection.query('select orders.*,a.province as province1,a.city as city1 ,b.province as province2,b.city as city2 from orders left join chinaCity as a on orders.startAddressID = a.id left join chinaCity as b on orders.endAddressID = b.id where orders.id = ?',ID,function (err,result) {
+            var data;
+            if(err){
+                data = new msg(-1,err);
+                res.json(data);
+                connection.release();
+            }else {
+                //如果请求者非寄件人或工作管理人员则返回失败数据
+                if(result.userID!=ID&&req.session.user.permission == 3){
+                    data = new msg(-1,null);
                     res.json(data);
                     connection.release();
+    
                 }else {
-                    //如果请求者非寄件人或工作管理人员则返回失败数据
-                    if(result.userID!=ID&&req.session.user.permission == 3){
-                        data = new msg(-1,null);
-                        res.json(data);
-                        connection.release();
-
-                    }else {
-                        data = new msg(0, '成功', {data: result});
-                        res.json(data);
-                        connection.release();
-                    }
+                    data = new msg(0, '成功', {data: result});
+                    res.json(data);
+                    connection.release();
                 }
-            });
+            }
         });
-    },//删除订单
+    });
+},//删除订单
     deleteOrder:function (req,res,next) {
         //判断用户的权限
         if(req.session.user.permission != 1){
@@ -248,7 +251,9 @@ module.exports={
             var orderID = req.body.orderID;
             connection.query('update orders set status=0 where id = ?',[orderID], function(err, result) {
                 if(err){
-                    return res.json(new msg(-1, err));
+                    res.json(new msg(-1, err));
+                    connection.release();
+                    return;
                 }
                 res.json(new msg(0, ''));
                 connection.release();
@@ -263,11 +268,13 @@ module.exports={
             var orderID = req.body.orderID;
             connection.query('select * from logistics where orderID = ?',[orderID],function (err,result) {
                 if(err){
-                    return res.json(new msg(-1, err));
+                    res.json(new msg(-1, err));
+                    connection.release();
+                    return;
                 }
-                data = new msg(0, '成功', {data: result});
+                var data = new msg(0, '成功', {data: result});
                 res.json(data);
-                connection.release;
+                connection.release();
             })
         })
     },//添加物流信息
@@ -285,7 +292,9 @@ module.exports={
             var status = req.body.status;
             connection.query('INSERT INTO logistics (description,operator,status,orderID) VALUES(?,?,?,?)', [description, req.session.user.id, status, orderID], function (err, result) {
                 if (err) {
-                    return res.json(new msg(-1, err));
+                    res.json(new msg(-1, err));
+                    connection.release();
+                    return;
                 }
                 res.json(new msg(0, ''));
                 connection.release();
