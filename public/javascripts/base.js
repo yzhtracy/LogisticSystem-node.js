@@ -66,11 +66,13 @@ function  getOrderStatusText(status) {
             break;
         case 2 : str = "承运中";
             break;
-        case 3 : str = "待收货";
+        case 3 : str = "已到达";
             break;
         case 4 : str = "已完成";
             break;
         case 5 : str = "已关闭";
+            break;
+        case 5 : str = "订单异常";
             break;
     }
     return str;

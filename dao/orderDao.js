@@ -290,15 +290,46 @@ module.exports={
             var orderID = req.body.orderID;
             var description = req.body.description;
             var status = req.body.status;
-            connection.query('INSERT INTO logistics (description,operator,status,orderID) VALUES(?,?,?,?)', [description, req.session.user.id, status, orderID], function (err, result) {
+            //开始事务
+            connection.beginTransaction(function(err) {
                 if (err) {
-                    res.json(new msg(-1, err));
-                    connection.release();
-                    return;
+                    throw err;
                 }
-                res.json(new msg(0, ''));
-                connection.release();
+                connection.query('INSERT INTO logistics (description,operator,status,orderID) VALUES(?,?,?,?)', [description, req.session.user.id, status, orderID], function (err, result) {
+                    if (err) {
+                        return connection.rollback(function() {
+                            data = new msg(-1,err);
+                            res.json(data);
+                            connection.release();
+                        });
+                    }else {
+                        connection.query('update orders set status = ? where id = ?',[status,orderID],function (err2,result2) {
+                            if(err2){
+                                return connection.rollback(function() {
+                                    data = new msg(-1,err2);
+                                    res.json(data);
+                                    connection.release();
+                                });
+                            }
+                            connection.commit(function(err3) {
+                                if (err3) {
+                                    return connection.rollback(function() {
+                                        data = new msg(-1,err3);
+                                        res.json(data);
+                                        connection.release();
+                                    });
+                                }
+                                data = new msg(0,"成功",[]);
+                                res.json(data);
+                                connection.release();
+                            })
+                        });
+                    }
+
+                })
+
             })
+
         })
     }
 };
