@@ -8,8 +8,8 @@ var cfg = {
     mysql:{
         host:'localhost',
         user:'root',
-        password:'taoyi',
-        database:'serveDatabase',
+        password:'7712714',
+        database:'yzhDB',
         port: 3306,
         acquireTimeout: 20000
     },

@@ -98,6 +98,12 @@ router.get('/orderDetail',function (req,res,next) {
   res.render('orderDetail',{user:req.session.user});
 })
 
+//===========================数据统计相关==================================
+//数据总览
+router.get('/charts',function (req,res,next) {
+  res.render('charts',{user:req.session.user});
+})
+
 //API接口
 //============================用户管理API=============================
 router.post('/user/query', function(req, res, next) {
