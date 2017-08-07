@@ -5,6 +5,7 @@ var cfg = require('../conf/cfg.js');
 var userDao = require('../dao/userDao.js');
 var priceDao = require('../dao/priceDao.js');
 var orderDao = require('../dao/orderDao');
+var statisticDao = require('../dao/statisticDao')
 
 
 var multer  = require('multer');
@@ -166,6 +167,11 @@ router.post('/order/queryLogistics',function (req,res,next) {
 })
 router.post('/order/addLogistics',function (req,res,next) {
   orderDao.addLogistics(req,res,next);
+})
+
+//===============================统计API=========================
+router.post('/statistic/query',function (req,res,next) {
+    statisticDao.queryStatistic(req,res,next);
 })
 
 module.exports = router;

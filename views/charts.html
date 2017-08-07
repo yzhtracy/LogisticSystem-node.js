@@ -13,8 +13,142 @@
     <div class="row">
         <% include _menu.html %>
         <div class=" col-md-11 col-md-offset-1 main">
+            <p style="float:left;padding-top: 10px;font-weight: bold">选择站点</p><select class="form-control" required id="province" style="width: 100px;float: left;margin-left: 20px">
+            </select>
+            <div id="countChart" style="height: 500px;padding-top:50px;"></div>
+            <div id="volumeChart" style="height: 500px;padding-top:50px;"></div>
         </div>
     </div>
+
 </div>
 </body>
 </html>
+<% include _foot.html %>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts-all-3.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+<script>
+    var tab = '/charts';
+
+    var queryWithID = function (id) {
+        $.post('/statistic/query', {id:id}, function (res) {
+            if (res.code >= 0) {
+
+            }
+        });
+    }
+    queryWithID(0);
+    //折线图
+    var countChartDom = $('#countChart')[0];
+    var countChart = echarts.init(countChartDom);
+    countChartOption = null;
+    countChartOption = {
+        title: {
+            text: '业务总览',
+            subtext: ''
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['发货量','到货量','异常数']
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                magicType: {show: true, type: ['stack', 'tiled']},
+                saveAsImage: {show: true}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: ['周一','周二','周三','周四','周五','周六','周日']
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [{
+            name: '发货量',
+            type: 'line',
+            smooth: true,
+            data: [10, 12, 21, 54, 260, 830, 710]
+        },
+            {
+                name: '到货量',
+                type: 'line',
+                smooth: true,
+                data: [30, 182, 434, 791, 390, 30, 10]
+            },
+            {
+                name: '异常数',
+                type: 'line',
+                smooth: true,
+                data: [1320, 1132, 601, 234, 120, 90, 20]
+            }]
+    };;
+    if (countChartOption && typeof countChartOption === "object") {
+        countChart.setOption(countChartOption, true);
+    }
+
+    //饼状图
+    var volumeChartDom = $('#volumeChart')[0];
+    var volumeChart = echarts.init(volumeChartDom);
+    volumeoption = null;
+    volumeoption = {
+        title : {
+            text: '仓库使用状况',
+            subtext: '',
+            x:'center'
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: ['正常已用','剩余容积','异常占用']
+        },
+        series : [
+            {
+                name: '仓库使用状况',
+                type: 'pie',
+                radius : '55%',
+                center: ['50%', '60%'],
+                data:[
+                    {value:335, name:'正常已用',itemStyle: {
+                        normal: {
+                            color: '#19c179'
+                        }
+                    }},
+                    {value:310, name:'剩余容积',itemStyle: {
+                        normal: {
+                            color: '#e5e5e5'
+                        }
+                    }},
+                    {value:234, name:'异常占用',itemStyle: {
+                        normal: {
+                            color: '#ff0000'
+                        }
+                    }}
+                ],
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+
+    if (volumeoption && typeof volumeoption === "object") {
+        volumeChart.setOption(volumeoption, true);
+    }
+</script>
