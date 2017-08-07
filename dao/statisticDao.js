@@ -26,11 +26,12 @@ module.exports={
                 throw  err;
             }
             var id = parseInt(req.body.id);
-
             var sqlString = id==0?'':'where ? = ?';
             var startResult = new Array();//发货量的数据结果
             var endResult = new Array();  //收货量的数据结果
             var exceptionResult = new Array();//异常的数据结果
+            var cityResult = [];//站点结果
+
             var stringWithDate = function (changeDate) {
                 return  changeDate.getFullYear()+'年'+changeDate.getMonth()+'月'+changeDate.getDate()+'日';
             }
@@ -45,9 +46,7 @@ module.exports={
                     var beforeDate = stringWithDate(new Date(beforetime));
                     var ResultDate = result.length==0?'':stringWithDate(new Date(result[j].time));
                      console.log(i+'bDate='+beforeDate+'rDate='+ResultDate);
-                     var resultObj = {};
-                    resultObj.dateStr = beforeDate;
-                    resultObj.count = 0;
+                     var resultObj = {dateStr:beforeDate,count:0};
                     ResultArray[i] = resultObj;
                      if(beforeDate == ResultDate){
                          resultObj.count = result[j].count;
@@ -56,10 +55,25 @@ module.exports={
                  }
                  return ResultArray;
             }
+            //查询可用站点及编号，第一个手动插入全部
+            var createCityArray = function (result) {
+                for(var i = 0;i<=result.length;i++){
+                    var cityObj = {};
+                    if(i==0){
+                        cityObj.id = 0;
+                        cityObj.name = '所有站点';
+                    }else {
+                        cityObj.id = result[i-1].id;
+                        cityObj.name = result[i-1].province+result[i-1].city+result[i-1].conunty;
+                    }
+                    cityResult[i] = cityObj;
+                }
+                return cityResult;
+            }
             //判断是否所有查询结果都已返回，全部完成后拼接数据并返回
             var resultComplete = function () {
-                if(startResult.length>0&&endResult.length>0&&exceptionResult.length>0){
-                    var data = new msg(0, '成功', {startResult:startResult,endResult:endResult,exceptionResult:exceptionResult});
+                if(startResult.length>0&&endResult.length>0&&exceptionResult.length>0&&cityResult.length>0){
+                    var data = new msg(0, '成功', {startResult:startResult,endResult:endResult,exceptionResult:exceptionResult,cityResult:cityResult});
                     res.json(data);
                     connection.release();
                 }
@@ -73,7 +87,6 @@ module.exports={
                 }else {
                     startResult = createDataArray(result);
                     resultComplete();
-
                 }
             });
             connection.query('select count(*) as count,date(createTime) as time from orders '+sqlString+' group by date(createTime) order by date(createTime) DESC LIMIT 0,7;',['endAddressID',id], function(err, result){
@@ -86,7 +99,8 @@ module.exports={
                     resultComplete();
                 }
             });
-            connection.query('select count(*) as count,date(createTime) as time from orders where '+'(endAddressID = ? or startAddressID = ?) AND '+'`status` = 6 group by date(createTime) order by date(createTime) DESC LIMIT 0,7;',[id,id], function(err, result){
+            var str = id==0?'':'(endAddressID = ? or startAddressID = ?) AND';
+            connection.query('select count(*) as count,date(createTime) as time from orders where '+str+'`status` = 6 group by date(createTime) order by date(createTime) DESC LIMIT 0,7;',[id,id], function(err, result){
                 if(err){
                     res.json(new msg(-1,"异常数查询出错"));
                     connection.release();
@@ -96,6 +110,13 @@ module.exports={
                     resultComplete();
                 }
             });
+            connection.query('select * from chinaCity where status = 1',[],function (err,result) {
+                if(err){
+                    return res.json(new msg(-1, err));
+                }
+                cityResult = createCityArray(result);
+                resultComplete();
+            })
 
         });
 

@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="95dbd618-6313-4ce5-83be-5d791e50a4c1" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dao/statisticDao.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/index.js" afterPath="$PROJECT_DIR$/routes/index.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/charts.html" afterPath="$PROJECT_DIR$/views/charts.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dao/statisticDao.js" afterPath="$PROJECT_DIR$/dao/statisticDao.js" />
     </list>
     <ignored path="propertySystem.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -73,8 +70,8 @@
       <file leaf-file-name="priceDao.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dao/priceDao.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="175">
-              <caret line="42" column="12" lean-forward="false" selection-start-line="42" selection-start-column="12" selection-end-line="42" selection-end-column="37" />
+            <state relative-caret-position="167">
+              <caret line="157" column="11" lean-forward="false" selection-start-line="157" selection-start-column="11" selection-end-line="168" selection-end-column="14" />
               <folding />
             </state>
           </provider>
@@ -83,8 +80,8 @@
       <file leaf-file-name="statisticDao.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dao/statisticDao.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="172">
-              <caret line="51" column="50" lean-forward="true" selection-start-line="51" selection-start-column="50" selection-end-line="51" selection-end-column="50" />
+            <state relative-caret-position="-766">
+              <caret line="53" column="22" lean-forward="true" selection-start-line="53" selection-start-column="22" selection-end-line="53" selection-end-column="22" />
               <folding>
                 <element signature="e#0#38#0" expanded="false" />
               </folding>
@@ -151,9 +148,9 @@
       <find>post</find>
       <find>app</find>
       <find>startResult</find>
-      <find>cons</find>
-      <find>getyear</find>
       <find>查询</find>
+      <find>getyear</find>
+      <find>cons</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -465,12 +462,12 @@
       <workItem from="1499420653024" duration="86000" />
       <workItem from="1499854589757" duration="335000" />
       <workItem from="1501491945630" duration="4517000" />
-      <workItem from="1501569754220" duration="70311000" />
+      <workItem from="1501569754220" duration="73284000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="507414000" />
+    <option name="totallyTimeSpent" value="510387000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="17" y="26" width="1387" height="793" extended-state="0" />
@@ -511,7 +508,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="170" />
+      <option name="time" value="176" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -872,14 +869,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dao/priceDao.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="42" column="12" lean-forward="false" selection-start-line="42" selection-start-column="12" selection-end-line="42" selection-end-column="37" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dao/orderDao.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2580">
@@ -888,10 +877,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/dao/priceDao.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="167">
+          <caret line="157" column="11" lean-forward="false" selection-start-line="157" selection-start-column="11" selection-end-line="168" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/dao/statisticDao.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="172">
-          <caret line="51" column="50" lean-forward="true" selection-start-line="51" selection-start-column="50" selection-end-line="51" selection-end-column="50" />
+        <state relative-caret-position="-766">
+          <caret line="53" column="22" lean-forward="true" selection-start-line="53" selection-start-column="22" selection-end-line="53" selection-end-column="22" />
           <folding>
             <element signature="e#0#38#0" expanded="false" />
           </folding>
