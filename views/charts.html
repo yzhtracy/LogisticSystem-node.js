@@ -13,8 +13,13 @@
     <div class="row">
         <% include _menu.html %>
         <div class=" col-md-11 col-md-offset-1 main">
-            <p style="float:left;padding-top: 10px;font-weight: bold">选择站点</p><select class="form-control" required id="province" style="width: 100px;float: left;margin-left: 20px">
-            </select>
+            <div class="form-group">
+                <label for="province" class="col-sm-4 control-label">选择站点:</label>
+                <div class="col-sm-8 input-group">
+                    <select id="province" class="form-control" style="width:200px;">
+                    </select>
+                </div>
+            </div>
             <div id="countChart" style="height: 500px;padding-top:50px;"></div>
             <div id="volumeChart" style="height: 500px;padding-top:50px;"></div>
         </div>
@@ -37,118 +42,136 @@
     var queryWithID = function (id) {
         $.post('/statistic/query', {id:id}, function (res) {
             if (res.code >= 0) {
+                //站点选择的下拉栏
+                if($("select option").size()==0){
+                    for (var i = 0; i<res.data.cityResult.length;i++){
+                        $('#province').append('<option value="'+res.data.cityResult[i].id+'">'+res.data.cityResult[i].name+'</option>');
+                        console.log("执行了第"+i+'次插入');
+                    }
+                }
+                //折线图
+                var countChartDom = $('#countChart')[0];
+                var countChart = echarts.init(countChartDom);
+                countChartOption = null;
+                countChartOption = {
+                    title: {
+                        text: '业务总览',
+                        subtext: ''
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data:['发货量','到货量','异常数']
+                    },
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            magicType: {show: true, type: ['stack', 'tiled']},
+                            saveAsImage: {show: true}
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: ['周一','周二','周三','周四','周五','周六','周日']
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: [{
+                        name: '发货量',
+                        type: 'line',
+                        smooth: true,
+                        data: getCountArray(res.data.startResult)
+                    },
+                        {
+                            name: '到货量',
+                            type: 'line',
+                            smooth: true,
+                            data: getCountArray(res.data.endResult)
+                        },
+                        {
+                            name: '异常数',
+                            type: 'line',
+                            smooth: true,
+                            data: getCountArray(res.data.exceptionResult)
+                        }]
+                };;
+                if (countChartOption && typeof countChartOption === "object") {
+                    countChart.setOption(countChartOption, true);
+                }
 
+                //饼状图
+                var volumeChartDom = $('#volumeChart')[0];
+                var volumeChart = echarts.init(volumeChartDom);
+                volumeoption = null;
+                volumeoption = {
+                    title : {
+                        text: '仓库使用状况',
+                        subtext: '',
+                        x:'center'
+                    },
+                    tooltip : {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: ['正常已用','剩余容积','异常占用']
+                    },
+                    series : [
+                        {
+                            name: '仓库使用状况',
+                            type: 'pie',
+                            radius : '55%',
+                            center: ['50%', '60%'],
+                            data:[
+                                {value:res.data.volumeData.normal, name:'正常已用',itemStyle: {
+                                    normal: {
+                                        color: '#3245ee'
+                                    }
+                                }},
+                                {value:res.data.volumeData.usable, name:'剩余容积',itemStyle: {
+                                    normal: {
+                                        color: '#19c179'
+                                    }
+                                }},
+                                {value:res.data.volumeData.abnormality, name:'异常占用',itemStyle: {
+                                    normal: {
+                                        color: '#ff0000'
+                                    }
+                                }}
+                            ],
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+
+                if (volumeoption && typeof volumeoption === "object") {
+                    volumeChart.setOption(volumeoption, true);
+                }
             }
         });
     }
     queryWithID(0);
-    //折线图
-    var countChartDom = $('#countChart')[0];
-    var countChart = echarts.init(countChartDom);
-    countChartOption = null;
-    countChartOption = {
-        title: {
-            text: '业务总览',
-            subtext: ''
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        legend: {
-            data:['发货量','到货量','异常数']
-        },
-        toolbox: {
-            show: true,
-            feature: {
-                magicType: {show: true, type: ['stack', 'tiled']},
-                saveAsImage: {show: true}
-            }
-        },
-        xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: ['周一','周二','周三','周四','周五','周六','周日']
-        },
-        yAxis: {
-            type: 'value'
-        },
-        series: [{
-            name: '发货量',
-            type: 'line',
-            smooth: true,
-            data: [10, 12, 21, 54, 260, 830, 710]
-        },
-            {
-                name: '到货量',
-                type: 'line',
-                smooth: true,
-                data: [30, 182, 434, 791, 390, 30, 10]
-            },
-            {
-                name: '异常数',
-                type: 'line',
-                smooth: true,
-                data: [1320, 1132, 601, 234, 120, 90, 20]
-            }]
-    };;
-    if (countChartOption && typeof countChartOption === "object") {
-        countChart.setOption(countChartOption, true);
+    var getCountArray = function (dataArray) {
+        var countArray = [];
+        for(var i = 0;i<7;i++){
+            countArray[i] = dataArray[6-i].count;
+        }
+        return countArray;
     }
+    $('#province').change(function(e){
+        console.log('改变之后值为'+$('#province').val());
+        queryWithID($('#province').val());
+    });
 
-    //饼状图
-    var volumeChartDom = $('#volumeChart')[0];
-    var volumeChart = echarts.init(volumeChartDom);
-    volumeoption = null;
-    volumeoption = {
-        title : {
-            text: '仓库使用状况',
-            subtext: '',
-            x:'center'
-        },
-        tooltip : {
-            trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-        legend: {
-            orient: 'vertical',
-            left: 'left',
-            data: ['正常已用','剩余容积','异常占用']
-        },
-        series : [
-            {
-                name: '仓库使用状况',
-                type: 'pie',
-                radius : '55%',
-                center: ['50%', '60%'],
-                data:[
-                    {value:335, name:'正常已用',itemStyle: {
-                        normal: {
-                            color: '#19c179'
-                        }
-                    }},
-                    {value:310, name:'剩余容积',itemStyle: {
-                        normal: {
-                            color: '#e5e5e5'
-                        }
-                    }},
-                    {value:234, name:'异常占用',itemStyle: {
-                        normal: {
-                            color: '#ff0000'
-                        }
-                    }}
-                ],
-                itemStyle: {
-                    emphasis: {
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)'
-                    }
-                }
-            }
-        ]
-    };
-
-    if (volumeoption && typeof volumeoption === "object") {
-        volumeChart.setOption(volumeoption, true);
-    }
 </script>

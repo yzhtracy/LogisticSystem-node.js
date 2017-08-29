@@ -26,7 +26,9 @@ module.exports={
                 throw  err;
             }
             var id = parseInt(req.body.id);
-            var sqlString = id==0?'':'where ? = ?';
+            var sqlString = function (str) {
+                return id==0?'':'where '+str+' = ?';
+            }
             var startResult = new Array();//发货量的数据结果
             var endResult = new Array();  //收货量的数据结果
             var exceptionResult = new Array();//异常的数据结果
@@ -70,16 +72,17 @@ module.exports={
                 }
                 return cityResult;
             }
+            var volumeData;
             //判断是否所有查询结果都已返回，全部完成后拼接数据并返回
             var resultComplete = function () {
-                if(startResult.length>0&&endResult.length>0&&exceptionResult.length>0&&cityResult.length>0){
-                    var data = new msg(0, '成功', {startResult:startResult,endResult:endResult,exceptionResult:exceptionResult,cityResult:cityResult});
+                if(startResult.length>0&&endResult.length>0&&exceptionResult.length>0&&cityResult.length>0&&volumeData){
+                    var data = new msg(0, '成功', {startResult:startResult,endResult:endResult,exceptionResult:exceptionResult,cityResult:cityResult,volumeData:volumeData});
                     res.json(data);
                     connection.release();
                 }
             }
 
-            connection.query('select count(*) as count,date(createTime) as time from orders '+sqlString+' group by date(createTime) order by date(createTime) DESC LIMIT 0,7;',['startAddressID',id], function(err, result){
+            connection.query('select count(*) as count,date(createTime) as time from orders '+sqlString('startAddressID')+' group by date(createTime) order by date(createTime) DESC LIMIT 0,7;',[id], function(err, result){
                 if(err){
                     res.json(new msg(-1,""));
                     connection.release();
@@ -89,7 +92,7 @@ module.exports={
                     resultComplete();
                 }
             });
-            connection.query('select count(*) as count,date(createTime) as time from orders '+sqlString+' group by date(createTime) order by date(createTime) DESC LIMIT 0,7;',['endAddressID',id], function(err, result){
+            connection.query('select count(*) as count,date(createTime) as time from orders '+sqlString('endAddressID')+' group by date(createTime) order by date(createTime) DESC LIMIT 0,7;',[id], function(err, result){
                 if(err){
                     res.json(new msg(-1,""));
                     connection.release();
@@ -117,7 +120,16 @@ module.exports={
                 cityResult = createCityArray(result);
                 resultComplete();
             })
-
+            var volumeStr = id==0?'? >= 0':'endAddressID = ?';
+            connection.query('SELECT SUM(case when c.`status` < 4 then o.volume ELSE 0 end) normal,SUM(case when c.`status` > 4 then o.volume ELSE 0 end) abnormality,SUM(c.volume) total FROM orders o JOIN chinaCity c ON o.startAddressID = c.id WHERE '+volumeStr+';',[id],function (err,result) {
+                if(err){
+                    return res.json(new msg(-1, '查询体积时出错'));
+                }
+                result = result[0];
+                result.usable = result.total - result.normal -result.abnormality;
+                volumeData = result;
+                resultComplete();
+            })
         });
 
     }

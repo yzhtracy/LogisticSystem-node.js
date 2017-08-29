@@ -172,6 +172,7 @@ router.post('/order/addLogistics',function (req,res,next) {
 //===============================统计API=========================
 router.post('/statistic/query',function (req,res,next) {
     statisticDao.queryStatistic(req,res,next);
+    console.log(req);
 })
 
 module.exports = router;
