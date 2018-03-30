@@ -199,7 +199,7 @@
                         var item = [];
                         item.push('<a class="op_edit" href="/orderDetail?id='+obj.id+'" data-id="'+obj.id+'">'+obj.id+'</a>');
                         //item.push('<span>'+obj.orderId+'</span>');
-                        item.push('<span  data-toggle="tooltip" data-placement="top" title="'+obj.account+'">'+obj.province1+"-"+obj.city1+' 至 '+obj.province2+"-"+obj.city2+'</span>');
+                        item.push('<a class="op_edit" href="/orderDetail?id='+obj.id+'" data-id="'+obj.id+' data-toggle="tooltip" data-placement="top" title="'+obj.account+'">'+obj.province1+"-"+obj.city1+' 至 '+obj.province2+"-"+obj.city2+'</a>');
                         item.push(obj.consignor);
                         item.push(obj.consignee);
                         item.push(obj.consignorPhoneNumber);

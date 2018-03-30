@@ -13,97 +13,90 @@
         <div class=" col-md-11 col-md-offset-1 main">
 
             <div class="container-fluid">
-                <form class="form-horizontal" style="margin-top:200px; margin: 0 auto; width: 500px; margin-top: 100px;" >
+                <form class="form-horizontal" style="margin-top:20px; " >
 
-                    <div class="form-group">
-                        <label for="consignor" class="col-sm-4 control-label">寄件人姓名:</label>
-                        <div class="col-sm-8 input-group">
-                            <input type="text" class="form-control" id="consignor" placeholder="寄件人姓名" autocomplete="off" required autofocus style="width:200px;">
+                    <div style="width: 1000px;box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.1);border-radius: 5px;background: rgba(255, 255, 255, 0.65);margin: 0 auto;height: 160px;float: none;padding: 10px 0 10px;">
+                        <div class="form-group">
+                            <label style="font-size: 22px;padding-left: 50px;">寄件人</label>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="consignorPhoneNumber" class="col-sm-4 control-label">寄件人联系方式:</label>
-                        <div class="col-sm-8 input-group">
-                            <input type="number" class="form-control" id="consignorPhoneNumber" placeholder="寄件人联系方式" autocomplete="off" required autofocus style="width:200px;">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="consignorAddress" class="col-sm-4 control-label">寄件人地址:</label>
-                        <div class="col-sm-8 input-group">
-                            <input type="text" class="form-control" id="consignorAddress" placeholder="寄件人地址" autocomplete="off" required autofocus style="width:200px;">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="consignee" class="col-sm-4 control-label">收件人姓名:</label>
-                        <div class="col-sm-8 input-group">
-                            <input type="text" class="form-control"  id="consignee" placeholder="收件人姓名" autocomplete="off" required autofocus style="width:200px;">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="consigneePhoneNumber" class="col-sm-4 control-label">收件人联系方式:</label>
-                        <div class="col-sm-8 input-group">
-                            <input type="number" class="form-control" id="consigneePhoneNumber" placeholder="收件人联系方式" autocomplete="off" required autofocus style="width:200px;">
+                            <div class="form-group">
+                                <label for="consignor" class="required col-xs-2 control-label">姓名:</label>
+                                <div class="col-xs-10 input-group">
+                                     <input type="text" class="form-control" id="consignor" placeholder="寄件人姓名" autocomplete="off" required autofocus style="width:150px;">
+                                    <label for="consignorPhoneNumber" class="required col-xs-4 control-label">联系方式:</label>
+                                    <input type="number" class="form-control" id="consignorPhoneNumber" placeholder="寄件人联系方式" autocomplete="off" required autofocus style="width:150px;">
+                                </div>
+                            </div>
+                        <div class="form-group">
+                            <label for="consignorAddress" class="col-sm-2 control-label">地址:</label>
+                            <div class="col-sm-10 input-group">
+                                <input type="text" class="form-control" id="consignorAddress" placeholder="寄件人地址" autocomplete="off" required autofocus style="width:300px;">
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="consigneeAddress" class="col-sm-4 control-label">收件人地址:</label>
-                        <div class="col-sm-8 input-group">
-                            <input type="text" class="form-control" id="consigneeAddress" placeholder="收件人地址" autocomplete="off" required autofocus style="width:200px;">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="weight" class="col-sm-4 control-label">总重量(kg):</label>
-                        <div class="col-sm-8 input-group">
-                            <input type="number" class="form-control" id="weight" placeholder="重量" autocomplete="off" required autofocus style="width:200px;" ng-model="weight">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="volume" class="col-sm-4 control-label">总体积(m³):</label>
-                        <div class="col-sm-8 input-group">
-                            <input type="number" class="form-control" id="volume" placeholder="体积:" autocomplete="off" required autofocus style="width:200px;" ng-model="volume">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="count" class="col-sm-4 control-label">总数量(件):</label>
-                        <div class="col-sm-8 input-group">
-                            <input type="number" class="form-control" id="count" placeholder="数量" autocomplete="off" required autofocus style="width:200px;" ng-model="count">
-                        </div>
+                    <div class="form-group" style="padding-top: 5px">
+                        <div style="width: 1000px;box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.1);border-radius: 5px;background: rgba(255, 255, 255, 0.65);margin: 0 auto;height: 160px;float: none;padding: 10px 0 0px;">
+                            <div class="form-group">
+                                <label style="font-size: 22px;padding-left: 50px;">收件人</label>
+                            </div>
+                            <div class="form-group">
+                                <label for="consignee" class="col-sm-2 control-label">姓名:</label>
+                                <div class="col-sm-10 input-group">
+                                    <input type="text" class="form-control"  id="consignee" placeholder="收件人姓名" autocomplete="off" required autofocus style="width:150px;">
+                                    <label for="consigneePhoneNumber" class="col-sm-4 control-label">联系方式:</label>
+                                    <input type="number" class="form-control" id="consigneePhoneNumber" placeholder="收件人联系方式" autocomplete="off" required autofocus style="width:150px;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="consigneeAddress" class="col-sm-2    control-label">地址:</label>
+                                <div class="col-sm-10 input-group">
+                                    <input type="text" class="form-control" id="consigneeAddress" placeholder="收件人地址" autocomplete="off" required autofocus style="width:300px;">
+                                </div>
+                            </div>
+                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="startAddress" class="col-sm-4 control-label">出发站点选择:</label>
-                        <div class="col-sm-8 input-group">
-                            <!-- <input type="password" class="form-control" id="inputPassword" placeholder="密码" autocomplete="off" required>-->
-                            <select id="startAddress" class="form-control" style="width:200px;">
-                            </select>
+                    <div class="form-group" style="padding-top: 5px">
+                        <div style="width: 1000px;box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.1);border-radius: 5px;background: rgba(255, 255, 255, 0.65);margin: 0 auto;height: 220px;float: none;padding: 10px 0 10px;">
+                            <div class="form-group">
+                                <label style="font-size: 22px;padding-left: 50px;">货物信息</label>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="weight" class="col-sm-2  control-label">总重量(kg):</label>
+                                <div class="col-sm-8 input-group">
+                                    <input type="number" class="form-control" id="weight" placeholder="重量" autocomplete="off" required autofocus style="width:100px;" ng-model="weight">
+                                    <label for="volume" class="col-sm-3 control-label">总体积(m³):</label>
+                                    <input type="number" class="form-control" id="volume" placeholder="体积:" autocomplete="off" required autofocus style="width:100px;" ng-model="volume">
+                                    <label for="count" class="col-sm-3 control-label">总数量(件):</label>
+                                    <input type="number" class="form-control" id="count" placeholder="数量" autocomplete="off" required autofocus style="width:100px;" ng-model="count">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="startAddress" class="col-sm-2 control-label">出发站点选择:</label>
+                                <div class="col-sm-8 input-group">
+                                    <select id="startAddress" class="form-control" style="width:200px;">
+                                    </select>
+                                    <label for="endAddress" class="col-sm-4 control-label">到达站点选择:</label>
+                                    <select id="endAddress" class="form-control" style="width:200px;">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+
+                                <div class="col-sm-8 input-group">
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <h4  class="col-sm-offset-5 col-sm-10">总计价格: <span id="priceLabel" style="color: indianred"></span></h4>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                    <label for="endAddress" class="col-sm-4 control-label">到达站点选择:</label>
-                    <div class="col-sm-8 input-group">
-                        <!-- <input type="password" class="form-control" id="inputPassword" placeholder="密码" autocomplete="off" required>-->
-                        <select id="endAddress" class="form-control" style="width:200px;">
-                        </select>
-                    </div>
-            </div>
-                    <div class="form-group">
-                        <h4 style="margin-left: 150px">总计价格: <span id="priceLabel" style="color: indianred"></span></h4>
-                    </div>
-
-
-                    <!-- <div class="form-group">
-                      <div class="col-sm-offset-2 col-sm-10">
-                        <div class="checkbox">
-                          <label>
-                            <input type="checkbox"> Remember me
-                          </label>
-                        </div>
-                      </div>
-                    </div> -->
                     <div class="form-group submit-btns">
-                        <div class="col-sm-offset-2 col-sm-10 input-group">
-                            <button type="submit" class="submit btn btn-primary">确定</button>
+                        <div class="col-sm-offset-5 col-sm-10 input-group">
+                            <button type="submit" class="submit btn btn-primary" style="width: 200px">确定</button>
                         </div>
                     </div>
                 </form>
